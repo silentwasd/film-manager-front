@@ -58,11 +58,6 @@ const nav = computed(() => [{
         to   : '/catalog/tags'
     }],
     visible : profile.value?.role == UserRole.Admin
-}, {
-    label  : 'Производство',
-    icon   : 'i-heroicons-light-bulb-solid',
-    to     : '/catalog/cinema',
-    visible: profile.value?.role == UserRole.Admin
 }].filter(item => !item.hasOwnProperty('visible') || item.visible));
 </script>
 
@@ -81,11 +76,6 @@ const nav = computed(() => [{
             </template>
 
             <template #right>
-                <UButton icon="i-heroicons-wifi-20-solid"
-                         variant="link"
-                         color="gray"
-                         to="/speed"/>
-
                 <UButton v-if="profile"
                          icon="i-heroicons-arrow-right-start-on-rectangle-20-solid"
                          variant="link"

@@ -291,13 +291,6 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
             <template #actions-data="{row}">
                 <div class="flex gap-2.5 justify-end">
-                    <UTooltip v-if="row.can_watch" text="Смотреть">
-                        <UButton color="gray"
-                                 icon="i-heroicons-play-solid"
-                                 square
-                                 :to="`/cinema/${row.id}`"/>
-                    </UTooltip>
-
                     <UTooltip v-if="row.can_edit" text="Изменить">
                         <UButton color="gray"
                                  icon="i-heroicons-pencil-solid"

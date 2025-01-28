@@ -86,12 +86,6 @@ const {
                                  icon="i-heroicons-plus"
                                  class="w-full"
                                  @click="backAfterLogin()"/>
-
-                        <UButton v-if="filmData.can_watch"
-                                 color="gray"
-                                 label="Смотреть"
-                                 icon="i-heroicons-play-solid"
-                                 :to="`/cinema/${filmData.id}`"/>
                     </div>
                 </div>
 
@@ -189,9 +183,4 @@ const {
 </template>
 
 <style scoped>
-.has-dot::before {
-    content: '•'; /* Символ точки */
-    margin: 0 8px; /* Отступы слева и справа от точки */
-    color: currentColor; /* Цвет текста */
-}
 </style>

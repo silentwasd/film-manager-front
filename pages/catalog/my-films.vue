@@ -217,13 +217,6 @@ async function remove(watcher: FilmWatcher) {
 
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
-                    <UTooltip v-if="row.film.can_watch" text="Смотреть">
-                        <UButton color="gray"
-                                 icon="i-heroicons-play-solid"
-                                 square
-                                 :to="`/cinema/${row.film.id}`"/>
-                    </UTooltip>
-
                     <LazyUiFilmReaction :film-id="row.film.id" :init-reaction="row.reaction"/>
 
                     <UTooltip text="Удалить">
