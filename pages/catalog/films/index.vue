@@ -266,7 +266,8 @@ const filmWatcherRepo = new FilmWatcherRepository();
             </template>
 
             <template #release_date-data="{row}">
-                <NuxtTime :datetime="row.release_date" date-style="short"/>
+                <NuxtTime v-if="row.release_date" :datetime="row.release_date" date-style="short"/>
+                <p v-else class="italic">Не указана</p>
             </template>
 
             <template #directors-data="{row}">

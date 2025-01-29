@@ -202,10 +202,12 @@ async function save(state: any) {
 
             <template #birth_date-data="{row}">
                 <NuxtTime v-if="row.birth_date" :datetime="row.birth_date" date-style="medium"/>
+                <p v-else class="italic">Не указана</p>
             </template>
 
             <template #death_date-data="{row}">
                 <NuxtTime v-if="row.death_date" :datetime="row.death_date" date-style="medium"/>
+                <p v-else class="italic">Не указана</p>
             </template>
 
             <template #roles-data="{row}">

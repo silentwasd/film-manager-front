@@ -208,16 +208,17 @@ async function remove(watcher: FilmWatcher) {
             </template>
 
             <template #film.release_date-data="{row}">
-                <NuxtTime :datetime="row.film.release_date" date-style="short"/>
+                <NuxtTime v-if="row.film.release_date" :datetime="row.film.release_date" date-style="short"/>
+                <p v-else class="italic">Не указана</p>
             </template>
 
             <template #status-data="{row}">
-                <UiWatcherStatusUpdate :watcher="row"/>
+                <UiWatcherStatusUpdate :key="row.id" :watcher="row"/>
             </template>
 
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
-                    <LazyUiFilmReaction :film-id="row.film.id" :init-reaction="row.reaction"/>
+                    <UiFilmReaction :key="row.id" :film-id="row.film.id" :init-reaction="row.reaction"/>
 
                     <UTooltip text="Удалить">
                         <UButton color="gray"
