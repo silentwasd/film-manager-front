@@ -211,7 +211,9 @@ async function save(state: any) {
             </template>
 
             <template #roles-data="{row}">
-                {{ row.roles.map((role: PersonRole) => personRole(role)).join(', ') }}
+                <p class="line-clamp-2 text-wrap leading-4">
+                    {{ row.roles.map((role: PersonRole) => personRole(role)).join(', ') }}
+                </p>
             </template>
 
             <template #actions-data="{row}">
