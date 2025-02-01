@@ -296,6 +296,13 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
             <template #actions-data="{row}">
                 <div class="flex gap-2.5 justify-end">
+                    <UTooltip text="Перейти">
+                        <UButton color="gray"
+                                 icon="i-heroicons-arrow-right"
+                                 square
+                                 :to="`/catalog/films/${row.id}`"/>
+                    </UTooltip>
+
                     <UTooltip v-if="row.can_edit" text="Изменить">
                         <UButton color="gray"
                                  icon="i-heroicons-pencil-solid"
@@ -306,7 +313,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
                     <UTooltip v-if="!row.is_mine"
                               text="В мои фильмы">
                         <UButton color="gray"
-                                 icon="i-heroicons-arrow-right"
+                                 icon="i-heroicons-plus"
                                  square
                                  @click="addRow = row"/>
                     </UTooltip>

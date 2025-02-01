@@ -218,6 +218,13 @@ async function remove(watcher: FilmWatcher) {
 
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
+                    <UTooltip text="Перейти">
+                        <UButton color="gray"
+                                 icon="i-heroicons-arrow-right"
+                                 square
+                                 :to="`/catalog/films/${row.film.id}`"/>
+                    </UTooltip>
+
                     <UiFilmReaction :key="row.id" :film-id="row.film.id" :init-reaction="row.reaction"/>
 
                     <UTooltip text="Удалить">
