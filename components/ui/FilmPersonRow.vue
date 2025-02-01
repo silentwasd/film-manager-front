@@ -59,8 +59,19 @@ async function remove() {
         <td class="w-1/3 pe-1.5 pb-2.5 group-last:pb-0">
             <UiRepoSearchSelectId :repo="new PersonRepository()"
                                   placeholder="Выберите человека из списка"
-                                  v-model="person.person_id"
-                                  disabled/>
+                                  v-model="person.person_id">
+                <template #default="{option}">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-cover bg-center bg-no-repeat rounded shrink-0"
+                             :style="`background-image: url(${option.photo ? fileUrl(option.photo) : '/img/person.jpg'});`"></div>
+
+                        <div class="grow">
+                            <p class="font-medium leading-4">{{ option.name }}</p>
+                            <p class="text-xs">{{ option.roles.map(role => personRole(role)).join(', ') }}</p>
+                        </div>
+                    </div>
+                </template>
+            </UiRepoSearchSelectId>
         </td>
 
         <td class="w-1/3 px-1.5 pb-2.5 group-last:pb-0">
