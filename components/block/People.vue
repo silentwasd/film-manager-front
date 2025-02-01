@@ -33,7 +33,7 @@ const details = ref<boolean>(false);
             </NuxtLink>
         </div>
 
-        <div class="flex justify-center mt-2.5">
+        <div v-if="people.length > 6" class="flex justify-center mt-2.5">
             <UButton :icon="details ? 'i-heroicons-chevron-double-up' : 'i-heroicons-chevron-double-down'"
                      color="gray"
                      size="xl"

@@ -2,46 +2,40 @@
 import PersonRepository from "~/repos/PersonRepository";
 import {PersonRole} from "~/types/enums/PersonRole";
 import FilmPersonRepository from "~/repos/FilmPersonRepository";
-import type FilmPersonResource from "~/resources/FilmPersonResource";
 
 const props = defineProps<{
-    person: FilmPersonResource,
     filmId: number
 }>();
 
 const emit = defineEmits<{
-    (e: 'removed'): void
+    (e: 'added'): void
 }>();
 
 const filmPersonRepo = new FilmPersonRepository(props.filmId);
 const toast          = useToast();
 const loading        = ref<boolean>(false);
 
-watch(() => [props.person.person_id, props.person.role, props.person.role_details], async () => {
-    if (loading.value)
+const person = ref<any>({
+    person_id   : 0,
+    role        : '',
+    role_details: ''
+});
+
+async function create() {
+    if (!person.value.person_id || !person.value.role)
         return;
 
     loading.value = true;
 
     try {
-        await filmPersonRepo.update(props.person);
-    } catch (err: any) {
-        toast.add({
-            title      : 'Ошибка',
-            description: err?.data?.message || err?.message,
-            color      : 'red'
-        });
-    } finally {
-        loading.value = false;
-    }
-});
+        await filmPersonRepo.store({...person.value});
+        emit('added');
 
-async function remove() {
-    loading.value = true;
-
-    try {
-        await filmPersonRepo.remove(props.person.id);
-        emit('removed');
+        person.value = {
+            person_id   : 0,
+            role        : '',
+            role_details: ''
+        };
     } catch (err: any) {
         toast.add({
             title      : 'Ошибка',
@@ -59,8 +53,7 @@ async function remove() {
         <td class="w-1/3 pe-1.5 pb-2.5 group-last:pb-0">
             <UiRepoSearchSelectId :repo="new PersonRepository()"
                                   placeholder="Выберите человека из списка"
-                                  v-model="person.person_id"
-                                  disabled/>
+                                  v-model="person.person_id"/>
         </td>
 
         <td class="w-1/3 px-1.5 pb-2.5 group-last:pb-0">
@@ -83,10 +76,10 @@ async function remove() {
         </td>
 
         <td class="ps-1.5 pb-2.5 group-last:pb-0">
-            <UButton icon="i-heroicons-trash-solid"
-                     :loading="loading"
+            <UButton icon="i-heroicons-plus"
                      color="gray"
-                     @click="remove"/>
+                     :loading="loading"
+                     @click="create"/>
         </td>
     </tr>
 </template>

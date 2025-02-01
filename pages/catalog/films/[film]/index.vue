@@ -43,15 +43,6 @@ useSeoMeta({
     ogSiteName: 'ВКинопоиск'
 });
 
-const peopleEdit = ref<boolean>(false);
-
-function peopleEditSwitch() {
-    peopleEdit.value = !peopleEdit.value;
-
-    if (!peopleEdit.value)
-        refresh();
-}
-
 const feedbackRepo = new FeedbackRepository(filmId);
 const {
           data   : feedback,
@@ -86,6 +77,13 @@ const {
                                  icon="i-heroicons-plus"
                                  class="w-full"
                                  @click="backAfterLogin()"/>
+
+                        <UButton
+                            v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"
+                            color="gray"
+                            label="Редактировать"
+                            icon="i-heroicons-pencil-solid"
+                            :to="`/catalog/films/${filmData.id}/edit`"/>
                     </div>
                 </div>
 
@@ -156,23 +154,12 @@ const {
                     <div v-if="filmData.people">
                         <div class="flex justify-between items-center">
                             <h1 class="font-bold text-2xl">Люди</h1>
-
-                            <UButton
-                                v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"
-                                color="gray"
-                                label="Редактировать"
-                                icon="i-heroicons-pencil-solid"
-                                @click="peopleEditSwitch"/>
                         </div>
 
-                        <FilmPeopleEdit v-if="peopleEdit"
-                                        class="mt-2.5"
-                                        :film-id="filmData.id"/>
-
-                        <BlockPeople v-else-if="filmData.people.length > 0"
+                        <BlockPeople v-if="filmData.people.length > 0"
                                      :people="filmData.people"/>
 
-                        <p v-if="!peopleEdit && filmData.people.length == 0">Людей здесь нет.</p>
+                        <p v-else>Людей здесь нет.</p>
                     </div>
 
                     <BlockFeedback :film-id="filmId" :items="feedback?.data ?? []" :refresh="refreshFeedback"/>

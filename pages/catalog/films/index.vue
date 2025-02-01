@@ -16,6 +16,7 @@ import TagRepository from "~/repos/management/TagRepository";
 import type TagResource from "~/resources/management/TagResource";
 import CompanyRepository from "~/repos/management/CompanyRepository";
 import type CompanyResource from "~/resources/management/CompanyResource";
+import type Resource from "~/types/Resource";
 
 definePageMeta({
     middleware: 'auth',
@@ -125,7 +126,15 @@ async function remove() {
     }
 }
 
-const editRow = ref<Film>();
+async function save(state: Partial<Film>) {
+    if (state.id && state.id > 0)
+        return;
+
+    const response = await repo.store<Resource<Film>>(state);
+    await navigateTo(`/catalog/films/${response.data.id}/edit`);
+}
+
+const editRow = ref<Partial<Film>>();
 
 const addRow = ref<Film>();
 
@@ -133,7 +142,7 @@ const ratingRow = ref<Film>();
 
 watch(ratingRow, () => refresh());
 
-watch(editRow, (value: Film | undefined) => {
+watch(editRow, (value: Partial<Film> | undefined) => {
     if (!value || !value.id)
         return;
 
@@ -146,16 +155,11 @@ watch(editRow, (value: Film | undefined) => {
     editRow.value.companies = value.companies?.map(company => (company as CompanyResource).id) ?? [];
 });
 
-function makeResource(): Film {
+function makeResource(): Partial<Film> {
     return {
-        id           : 0,
-        name         : '',
-        original_name: '',
-        format       : FilmFormat.Film,
-        genres       : [],
-        countries    : [],
-        tags         : [],
-        companies    : []
+        id    : 0,
+        name  : '',
+        format: FilmFormat.Film
     };
 }
 
@@ -296,7 +300,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
                         <UButton color="gray"
                                  icon="i-heroicons-pencil-solid"
                                  square
-                                 @click="editRow = {...row, cover: null}"/>
+                                 :to="`/catalog/films/${row.id}/edit`"/>
                     </UTooltip>
 
                     <UTooltip v-if="!row.is_mine"
@@ -333,7 +337,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
     <ModalEditModel v-model="editRow"
                     :readonly="!(editRow?.can_edit ?? true)"
-                    :save="(state: any) => state.id > 0 ? repo.update(state).then(() => refresh()) : repo.store(state).then(() => refresh())">
+                    :save="save">
         <template #create-title>Новый фильм</template>
         <template #edit-title="{state}">Фильм #{{ state.id }}</template>
 
@@ -342,80 +346,10 @@ const filmWatcherRepo = new FilmWatcherRepository();
                 <UInput v-model="state.name" placeholder="Джек который построил дом"/>
             </UFormGroup>
 
-            <UFormGroup label="Оригинальное наименование" name="original_name">
-                <UInput v-model="state.original_name" placeholder="The Jack Who Built The House"/>
-            </UFormGroup>
-
             <UFormGroup label="Формат" name="format" required>
                 <USelectMenu v-model="state.format"
                              :options="formatOptions"
                              value-attribute="value"/>
-            </UFormGroup>
-
-            <UFormGroup label="Обложка" name="cover">
-                <UInput type="file" @input="state.cover = $event.target.files[0]"/>
-            </UFormGroup>
-
-            <UFormGroup label="Дата выхода" name="release_date">
-                <UInput type="date"
-                        :model-value="state.release_date ? undater(state.release_date) : null"
-                        @update:model-value="state.release_date = dater($event)"/>
-            </UFormGroup>
-
-            <UFormGroup label="Жанры" name="genres">
-                <UiRepoSearchSelectId :repo="new GenreRepository()"
-                                      placeholder="Выберите жанры из списка"
-                                      multiple
-                                      v-model="state.genres">
-                    <template v-if="state.genres.length > 0" #label="{options}">
-                        {{
-                            state.genres.map(genre => options.find(option => genre == option.id)?.name ?? genre).join(', ')
-                        }}
-                    </template>
-                </UiRepoSearchSelectId>
-            </UFormGroup>
-
-            <UFormGroup label="Страны" name="countries">
-                <UiRepoSearchSelectId :repo="new CountryRepository()"
-                                      placeholder="Выберите страны из списка"
-                                      multiple
-                                      v-model="state.countries">
-                    <template v-if="state.countries.length > 0" #label="{options}">
-                        {{
-                            state.countries.map(country => options.find(option => country == option.id)?.name ?? country).join(', ')
-                        }}
-                    </template>
-                </UiRepoSearchSelectId>
-            </UFormGroup>
-
-            <UFormGroup label="Теги" name="tags">
-                <UiRepoSearchSelectId :repo="new TagRepository()"
-                                      placeholder="Выберите теги из списка"
-                                      multiple
-                                      v-model="state.tags">
-                    <template v-if="state.tags.length > 0" #label="{options}">
-                        {{
-                            state.tags.map(tag => options.find(option => tag == option.id)?.name ?? tag).join(', ')
-                        }}
-                    </template>
-                </UiRepoSearchSelectId>
-            </UFormGroup>
-
-            <UFormGroup label="Компании" name="companies">
-                <UiRepoSearchSelectId :repo="new CompanyRepository()"
-                                      placeholder="Выберите компании из списка"
-                                      multiple
-                                      v-model="state.companies">
-                    <template v-if="state.companies.length > 0" #label="{options}">
-                        {{
-                            state.companies.map(company => options.find(option => company == option.id)?.name ?? company).join(', ')
-                        }}
-                    </template>
-                </UiRepoSearchSelectId>
-            </UFormGroup>
-
-            <UFormGroup label="Описание" name="description">
-                <UTextarea v-model="state.description" autoresize :maxrows="10"/>
             </UFormGroup>
         </template>
     </ModalEditModel>
