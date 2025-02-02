@@ -15,13 +15,8 @@ const details = ref<boolean>(false);
                       class="flex items-center gap-2.5 w-[250px]"
                       :key="person.id"
                       :to="`/catalog/people/${person.person_id}`">
-                <div v-if="person.person?.photo"
-                     :style="`background-image: url(${fileUrl(person.person?.photo)})`"
+                <div :style="`background-image: url(${person.person?.photo ? fileUrl(person.person?.photo) : '/img/person.jpg'})`"
                      class="block rounded-md w-[80px] h-[80px] shrink-0 bg-cover bg-center"/>
-
-                <div v-else>
-                    <UIcon name="i-heroicons-user-circle" class="text-7xl"/>
-                </div>
 
                 <div class="font-roboto">
                     <p class="font-light leading-3 text-sm">{{ personRole(person.role) }}</p>
