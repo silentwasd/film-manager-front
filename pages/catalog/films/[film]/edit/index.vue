@@ -143,7 +143,7 @@ save.value = async () => {
                         @update:model-value="state.release_date = dater($event)"/>
 
                 <template v-if="state.release_date" #hint>
-                    <NuxtTime :datetime="state.release_date" date-style="medium"/>
+                    <NuxtTime :datetime="undater(state.release_date)" date-style="medium"/>
                 </template>
             </UFormGroup>
 
