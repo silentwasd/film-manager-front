@@ -100,8 +100,8 @@ async function remove() {
 
 <template>
     <div>
-        <div class="flex items-start gap-5">
-            <div class="w-28 h-28 bg-cover bg-center bg-no-repeat rounded-lg shrink-0 relative group overflow-clip"
+        <div class="flex items-start gap-3">
+            <div class="w-16 h-16 bg-cover bg-center bg-no-repeat rounded-lg shrink-0 relative group overflow-clip"
                  :style="`background-image: url(${record.person && record.person.photo ? fileUrl(record.person.photo) : '/img/person.jpg'});`">
                 <div
                     class="opacity-0 group-hover:opacity-100 flex items-center justify-center backdrop-blur w-full h-full transition-opacity cursor-pointer"
@@ -111,34 +111,33 @@ async function remove() {
             </div>
 
             <div class="grow">
-                <p class="font-medium text-lg line-clamp-1 mb-1.5">
+                <p class="font-medium line-clamp-1 mb-1.5">
                     {{ record.person ? record.person.name : 'Выберите человека' }}
                 </p>
 
                 <UForm ref="form" :state="record">
-                    <UFormGroup name="role" class="mb-2.5">
-                        <USelectMenu :options="Object.values(PersonRole)"
-                                     placeholder="Выберите роль из списка"
-                                     v-model="record.role">
-                            <template #option="{option}">
-                                {{ personRole(option) }}
-                            </template>
+                    <div class="flex items-start gap-2.5 w-full">
+                        <UFormGroup name="role" class="w-1/2">
+                            <USelectMenu :options="Object.values(PersonRole)"
+                                         placeholder="Выберите роль из списка"
+                                         v-model="record.role">
+                                <template #option="{option}">
+                                    {{ personRole(option) }}
+                                </template>
 
-                            <template v-if="record.role" #label>
-                                {{ personRole(record.role) }}
-                            </template>
-                        </USelectMenu>
-                    </UFormGroup>
+                                <template v-if="record.role" #label>
+                                    {{ personRole(record.role) }}
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
 
-                    <UFormGroup name="role_details" class="mb-2.5">
-                        <UInput placeholder="Доп. информация"
-                                v-model="record.role_details"/>
-                    </UFormGroup>
+                        <UFormGroup name="role_details" class="w-1/2">
+                            <UInput placeholder="Доп. информация"
+                                    v-model="record.role_details"/>
+                        </UFormGroup>
 
-                    <div>
                         <UButton v-if="record.id == 0"
                                  color="gray"
-                                 label="Добавить"
                                  icon="i-heroicons-plus"
                                  :loading="creating"
                                  :disabled="creating || !record.person"
@@ -146,8 +145,7 @@ async function remove() {
 
                         <UButton v-else
                                  color="gray"
-                                 label="Удалить"
-                                 icon="i-heroicons-trash"
+                                 icon="i-heroicons-trash-solid"
                                  :loading="updating || removing"
                                  @click="remove"/>
                     </div>
