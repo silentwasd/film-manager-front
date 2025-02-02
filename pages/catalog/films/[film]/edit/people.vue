@@ -17,22 +17,20 @@ const {data: people, refresh: refreshPeople, status} = await personRepo.list(`fi
 </script>
 
 <template>
-    <table class="my-2.5">
-        <tbody>
-        <UiFilmPersonAdd v-if="(people?.data ?? []).length > 5"
-                         :film-id="film.id"
-                         @added="refreshPeople"/>
+    <div>
+        <div class="flex flex-col gap-5 py-5">
+            <UiFilmPersonRow :film-id="film.id"
+                             @refresh="refreshPeople"/>
 
-        <UiFilmPersonRow v-for="person in (people?.data ?? [])"
-                         :key="person.id"
-                         :person="person"
-                         :film-id="film.id"
-                         @removed="refreshPeople"/>
+            <UiFilmPersonRow v-for="person in people.data ?? []"
+                             :film-id="film.id"
+                             :person="person"
+                             @refresh="refreshPeople"/>
 
-        <UiFilmPersonAdd :film-id="film.id"
-                         @added="refreshPeople"/>
-        </tbody>
-    </table>
+            <UiFilmPersonRow :film-id="film.id"
+                             @refresh="refreshPeople"/>
+        </div>
+    </div>
 </template>
 
 <style scoped>

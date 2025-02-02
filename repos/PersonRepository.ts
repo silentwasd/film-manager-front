@@ -21,7 +21,7 @@ export default class PersonRepository extends CrudRepository<PersonResource, num
             name          : query,
             sort_column   : 'films_count',
             sort_direction: 'desc',
-            model_id      : id ?? null,
+            model_id      : id ?? undefined,
             role          : this.role
         }).toString());
     }

@@ -141,6 +141,10 @@ save.value = async () => {
                 <UInput type="date"
                         :model-value="state.release_date ? undater(state.release_date) : undefined"
                         @update:model-value="state.release_date = dater($event)"/>
+
+                <template v-if="state.release_date" #hint>
+                    <NuxtTime :datetime="state.release_date" date-style="medium"/>
+                </template>
             </UFormGroup>
 
             <UFormGroup label="Жанры" name="genres">

@@ -1,47 +1,74 @@
 <script setup lang="ts">
-import PersonRepository from "~/repos/PersonRepository";
 import {PersonRole} from "~/types/enums/PersonRole";
 import FilmPersonRepository from "~/repos/FilmPersonRepository";
 import type FilmPersonResource from "~/resources/FilmPersonResource";
+import type PersonResource from "~/resources/PersonResource";
 
 const props = defineProps<{
-    person: FilmPersonResource,
-    filmId: number
+    filmId: number,
+    person?: PersonResource
 }>();
 
 const emit = defineEmits<{
-    (e: 'removed'): void
+    (e: 'refresh'): void
 }>();
 
 const filmPersonRepo = new FilmPersonRepository(props.filmId);
 const toast          = useToast();
-const loading        = ref<boolean>(false);
+const creating       = ref<boolean>(false);
+const updating       = ref<boolean>(false);
+const removing       = ref<boolean>(false);
+const form           = ref();
+const pickShown      = ref<boolean>(false);
 
-watch(() => [props.person.person_id, props.person.role, props.person.role_details], async () => {
-    if (loading.value)
-        return;
-
-    loading.value = true;
-
-    try {
-        await filmPersonRepo.update(props.person);
-    } catch (err: any) {
-        toast.add({
-            title      : 'Ошибка',
-            description: err?.data?.message || err?.message,
-            color      : 'red'
-        });
-    } finally {
-        loading.value = false;
-    }
+const record = ref<Partial<FilmPersonResource>>(props.person ?? {
+    id          : 0,
+    person      : undefined,
+    role        : undefined,
+    role_details: ''
 });
 
-async function remove() {
-    loading.value = true;
+async function create() {
+    creating.value = true;
 
     try {
-        await filmPersonRepo.remove(props.person.id);
-        emit('removed');
+        await filmPersonRepo.store({...record.value, person_id: record.value.person?.id ?? 0});
+        emit('refresh');
+
+        record.value = {
+            id          : 0,
+            person      : undefined,
+            role        : undefined,
+            role_details: ''
+        };
+    } catch (err: any) {
+        if (err.statusCode === 422) {
+            form.value.setErrors(Object.keys(err.data.errors).map((key: string) => ({
+                message: err.data.errors[key].join('. '),
+                path   : key
+            })));
+
+            return;
+        }
+
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err?.message,
+            color      : 'red'
+        });
+    } finally {
+        creating.value = false;
+    }
+}
+
+watchDebounced(record, async () => {
+    if (updating.value || record.value.id == 0)
+        return;
+
+    updating.value = true;
+
+    try {
+        await filmPersonRepo.update({...record.value, person_id: record.value.person?.id ?? 0});
     } catch (err: any) {
         toast.add({
             title      : 'Ошибка',
@@ -49,57 +76,87 @@ async function remove() {
             color      : 'red'
         });
     } finally {
-        loading.value = false;
+        updating.value = false;
+    }
+}, {debounce: 500, deep: true});
+
+async function remove() {
+    removing.value = true;
+
+    try {
+        await filmPersonRepo.remove(record.value.id);
+        emit('refresh');
+    } catch (err: any) {
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err?.message,
+            color      : 'red'
+        });
+    } finally {
+        removing.value = false;
     }
 }
 </script>
 
 <template>
-    <tr class="group">
-        <td class="w-1/3 pe-1.5 pb-2.5 group-last:pb-0">
-            <UiRepoSearchSelectId :repo="new PersonRepository()"
-                                  placeholder="Выберите человека из списка"
-                                  v-model="person.person_id">
-                <template #default="{option}">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-cover bg-center bg-no-repeat rounded shrink-0"
-                             :style="`background-image: url(${option.photo ? fileUrl(option.photo) : '/img/person.jpg'});`"></div>
+    <div>
+        <div class="flex items-start gap-5">
+            <div class="w-28 h-28 bg-cover bg-center bg-no-repeat rounded-lg shrink-0 relative group overflow-clip"
+                 :style="`background-image: url(${record.person && record.person.photo ? fileUrl(record.person.photo) : '/img/person.jpg'});`">
+                <div
+                    class="opacity-0 group-hover:opacity-100 flex items-center justify-center backdrop-blur w-full h-full transition-opacity cursor-pointer"
+                    @click="pickShown = true">
+                    <UIcon name="i-heroicons-cursor-arrow-rays-solid" class="text-6xl drop-shadow"/>
+                </div>
+            </div>
 
-                        <div class="grow">
-                            <p class="font-medium leading-4">{{ option.name }}</p>
-                            <p class="text-xs">{{ option.roles.map(role => personRole(role)).join(', ') }}</p>
-                        </div>
+            <div class="grow">
+                <p class="font-medium text-lg line-clamp-1 mb-1.5">
+                    {{ record.person ? record.person.name : 'Выберите человека' }}
+                </p>
+
+                <UForm ref="form" :state="record">
+                    <UFormGroup name="role" class="mb-2.5">
+                        <USelectMenu :options="Object.values(PersonRole)"
+                                     placeholder="Выберите роль из списка"
+                                     v-model="record.role">
+                            <template #option="{option}">
+                                {{ personRole(option) }}
+                            </template>
+
+                            <template v-if="record.role" #label>
+                                {{ personRole(record.role) }}
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup name="role_details" class="mb-2.5">
+                        <UInput placeholder="Доп. информация"
+                                v-model="record.role_details"/>
+                    </UFormGroup>
+
+                    <div>
+                        <UButton v-if="record.id == 0"
+                                 color="gray"
+                                 label="Добавить"
+                                 icon="i-heroicons-plus"
+                                 :loading="creating"
+                                 :disabled="creating || !record.person"
+                                 @click="create"/>
+
+                        <UButton v-else
+                                 color="gray"
+                                 label="Удалить"
+                                 icon="i-heroicons-trash"
+                                 :loading="updating || removing"
+                                 @click="remove"/>
                     </div>
-                </template>
-            </UiRepoSearchSelectId>
-        </td>
+                </UForm>
+            </div>
+        </div>
+    </div>
 
-        <td class="w-1/3 px-1.5 pb-2.5 group-last:pb-0">
-            <USelectMenu :options="Object.values(PersonRole)"
-                         placeholder="Выберите роль из списка"
-                         v-model="person.role">
-                <template #option="{option}">
-                    {{ personRole(option) }}
-                </template>
-
-                <template v-if="person.role" #label>
-                    {{ personRole(person.role) }}
-                </template>
-            </USelectMenu>
-        </td>
-
-        <td class="w-1/3 px-1.5 pb-2.5 group-last:pb-0">
-            <UInput placeholder="Доп. информация"
-                    v-model="person.role_details"/>
-        </td>
-
-        <td class="ps-1.5 pb-2.5 group-last:pb-0">
-            <UButton icon="i-heroicons-trash-solid"
-                     :loading="loading"
-                     color="gray"
-                     @click="remove"/>
-        </td>
-    </tr>
+    <ModalPickPerson v-model="pickShown" @picked="record.person = $event"/>
 </template>
 
 <style scoped>

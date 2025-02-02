@@ -4,7 +4,8 @@ import type SearchableRepository from "~/types/repos/SearchableRepository";
 const props = defineProps<{
     repo: SearchableRepository | (() => SearchableRepository),
     disabled?: boolean,
-    searchablePlaceholder?: string
+    searchablePlaceholder?: string,
+    firstModelSearch?: string
 }>();
 
 const key = ref<number>(0);
@@ -29,7 +30,7 @@ async function search(query: string) {
 
     const repo = typeof(props.repo) === 'function' ? props.repo() : props.repo;
 
-    const formats = await repo.search(query);
+    const formats = await repo.search(query, model.value && props.firstModelSearch ? model.value[props.firstModelSearch] : undefined);
 
     loading.value = false;
 
