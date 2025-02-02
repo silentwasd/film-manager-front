@@ -19,6 +19,7 @@ const {data: people, clear, refresh} = await personRepo.lazyList(() => ({
 
 watch(shown, (value) => {
     if (!value) {
+        search.value = '';
         clear();
     } else {
         refresh();
