@@ -44,7 +44,7 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                     <div class="sm:sticky sm:top-20 flex flex-col gap-2.5">
                         <img :src="personData?.photo ? fileUrl(personData.photo) : '/img/person.jpg'"
                              :alt="personData.name"
-                             class="block rounded-lg w-full sm:w-[250px] sm:max-h-[400px] border dark:border-gray-800"/>
+                             class="block rounded-lg w-full sm:w-[250px] sm:max-h-[400px] border dark:border-gray-800 object-cover"/>
                     </div>
                 </div>
 
