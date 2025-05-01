@@ -11,7 +11,7 @@ definePageMeta({
 const config = useRuntimeConfig();
 
 useSeoMeta({
-    title        : 'ВКинопоиск',
+    title        : 'Жанры // ВКинопоиск',
     description  : 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
     ogTitle      : 'ВКинопоиск',
     ogDescription: 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
@@ -43,6 +43,10 @@ const columns = [
         key     : 'name',
         label   : 'Наименование',
         sortable: true
+    },
+    {
+        key     : 'slug',
+        label   : 'Slug'
     },
     {
         key: 'actions'
@@ -112,6 +116,11 @@ async function save(state: any) {
                 </UButton>
             </template>
 
+            <template #slug-data="{row}">
+                <p v-if="row.slug">{{ row.slug }}</p>
+                <p v-else class="italic">Не указан</p>
+            </template>
+
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip text="Изменить">
@@ -135,11 +144,23 @@ async function save(state: any) {
     <ModalEditModel v-model="editRow"
                     :save="save">
         <template #create-title>Новый жанр</template>
-        <template #edit-title="{state}">Жанр #{{ state.id }}</template>
+        <template #edit-title>Жанр "{{ editRow?.name }}"</template>
 
         <template #default="{state}">
             <UFormGroup label="Наименование" name="name" required>
                 <UInput v-model="state.name" placeholder="Комедия"/>
+            </UFormGroup>
+
+            <UFormGroup label="Slug" name="slug" required>
+                <UInput v-model="state.slug" placeholder="comedy"/>
+            </UFormGroup>
+
+            <UFormGroup label="Иконка" name="icon">
+                <UInput v-model="state.icon" placeholder="i-mdi-pistol"/>
+            </UFormGroup>
+
+            <UFormGroup label="Описание" name="description">
+                <UTextarea v-model="state.description" placeholder="Это весело."/>
             </UFormGroup>
         </template>
     </ModalEditModel>

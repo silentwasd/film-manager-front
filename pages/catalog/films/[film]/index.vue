@@ -26,10 +26,20 @@ const filmData = computed<Film | null>(() => film.value?.data || null);
 const director = computed<string | undefined | null>(() => filmData.value?.people?.find(person => person.role == PersonRole.Director)?.person?.name);
 const actor    = computed<string | undefined | null>(() => filmData.value?.people?.find(person => person.role == PersonRole.Actor)?.person?.name);
 
+let title = 'Фильм ' + filmData.value?.name;
+
+if (filmData.value?.release_date) {
+    title += `, ${new Date(filmData.value.release_date).getFullYear()}`;
+}
+
+if (filmData.value?.original_name) {
+    title += ` (${filmData.value.original_name})`;
+}
+
 useSeoMeta({
-    title        : filmData.value?.name + ' // ВКинопоиск',
+    title        : `${title} // ВКинопоиск`,
     description  : filmData.value?.description,
-    ogTitle      : filmData.value?.name,
+    ogTitle      : `${title} // ВКинопоиск`,
     ogDescription: filmData.value?.description,
     ogImage      : filmData.value?.cover
                    ? fileUrl(filmData.value.cover as string)
@@ -109,9 +119,13 @@ const {
                             <tr v-if="(filmData.genres ?? []).length > 0">
                                 <td class="font-medium">Жанр</td>
                                 <td>
-                                    {{
-                                        filmData.genres?.map((genre, index) => index == 0 ? (genre as GenreResource).name : (genre as GenreResource).name.toLowerCase())?.join(', ')
-                                    }}
+                                    <template v-for="(genre, index) in filmData.genres">
+                                        {{ index > 0 ? ', ' : ''}}
+                                        <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
+                                                  :to="`/genres/${genre.slug}`">
+                                            {{ index > 0 ? genre.name.toLowerCase() : genre.name }}
+                                        </NuxtLink>
+                                    </template>
                                 </td>
                             </tr>
                             <tr v-if="(filmData.countries ?? []).length > 0">
