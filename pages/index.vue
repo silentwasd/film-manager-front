@@ -28,16 +28,26 @@ const {data: films, status} = await filmRepo.lazyList(() => ({
     name: slowName.value,
     page: page.value
 }));
+
+watch(slowName, () => page.value = 1);
 </script>
 
 <template>
     <UMain>
         <div class="font-roboto">
             <UContainer class="py-5 md:py-10">
-                <UInput size="lg"
+                <UInput size="xl"
                         v-model="name"
-                        placeholder="Название фильма"
-                        class="mb-5"/>
+                        placeholder="Найти фильм..."
+                        class="mb-10"/>
+
+                <div class="flex justify-center">
+                    <UPagination v-model="page"
+                                 class="mb-10"
+                                 size="xl"
+                                 :page-count="films?.meta.per_page"
+                                 :total="films?.meta.total"/>
+                </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-5">
                     <NuxtLink class="block"
@@ -60,6 +70,14 @@ const {data: films, status} = await filmRepo.lazyList(() => ({
                             </p>
                         </div>
                     </NuxtLink>
+                </div>
+
+                <div class="flex justify-center">
+                    <UPagination v-model="page"
+                                 class="mt-10"
+                                 size="xl"
+                                 :page-count="films?.meta.per_page"
+                                 :total="films?.meta.total"/>
                 </div>
             </UContainer>
         </div>
