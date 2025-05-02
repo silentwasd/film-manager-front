@@ -18,7 +18,7 @@ const details = ref<boolean>(false);
                 <div :style="`background-image: url(${person.person?.photo ? fileUrl(person.person?.photo) : '/img/person.jpg'})`"
                      class="block rounded-md w-[80px] h-[80px] shrink-0 bg-cover bg-center"/>
 
-                <div class="font-roboto">
+                <div class="font-roboto grow w-0">
                     <p class="font-light leading-3 text-sm">{{ personRole(person.role) }}</p>
                     <p class="text-2xl font-black line-clamp-2 leading-6 mt-0.5">
                         {{ person.person?.name }}
