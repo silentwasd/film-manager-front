@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import FilmRepository from "~/repos/FilmRepository";
 import type Film from "~/resources/Film";
-import FilmPeopleEdit from "~/components/ui/FilmPeopleEdit.vue";
 import {UserRole} from "~/types/enums/UserRole";
 import {PersonRole} from "~/types/enums/PersonRole";
-import type GenreResource from "~/resources/management/GenreResource";
 import type CountryResource from "~/resources/management/CountryResource";
 import FeedbackRepository from "~/repos/FeedbackRepository";
 import type TagResource from "~/resources/management/TagResource";
 import type CompanyResource from "~/resources/management/CompanyResource";
+import {FilmFormat} from "~/types/enums/FilmFormat";
 
 definePageMeta({
     layout: 'management'
@@ -26,7 +25,7 @@ const filmData = computed<Film | null>(() => film.value?.data || null);
 const director = computed<string | undefined | null>(() => filmData.value?.people?.find(person => person.role == PersonRole.Director)?.person?.name);
 const actor    = computed<string | undefined | null>(() => filmData.value?.people?.find(person => person.role == PersonRole.Actor)?.person?.name);
 
-let title = 'Фильм ' + filmData.value?.name;
+let title = `${filmFormat(filmData.value?.format ?? FilmFormat.Film)} "${filmData.value?.name}"`;
 
 if (filmData.value?.release_date) {
     title += `, ${new Date(filmData.value.release_date).getFullYear()}`;
