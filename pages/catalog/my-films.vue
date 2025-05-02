@@ -90,8 +90,8 @@ const columns = [
         sortable: true
     },
     {
-        key     : 'film.release_date',
-        label   : 'Дата выхода',
+        key     : 'film.produced_year',
+        label   : 'Год',
         sortable: true
     },
     {
