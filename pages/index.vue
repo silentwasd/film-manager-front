@@ -62,7 +62,7 @@ watch(slowName, () => page.value = 1);
                             <p class="truncate text-lg font-medium leading-5">{{ film.name }}</p>
                             <p class="font-light truncate text-sm">
                         <span>
-                            {{ {film: 'Фильм', 'mini-series': 'Мини-сериал', series: 'Сериал'}[film.format] }}
+                            {{ filmFormat(film.format) }}
                         </span>
                                 <span class="text-gray-600 dark:text-gray-400 italic ms-1">{{
                                         film.release_date
