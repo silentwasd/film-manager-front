@@ -6,7 +6,6 @@ import {PersonRole} from "~/types/enums/PersonRole";
 import type CountryResource from "~/resources/management/CountryResource";
 import FeedbackRepository from "~/repos/FeedbackRepository";
 import type TagResource from "~/resources/management/TagResource";
-import type CompanyResource from "~/resources/management/CompanyResource";
 import {FilmFormat} from "~/types/enums/FilmFormat";
 
 definePageMeta({
@@ -130,9 +129,9 @@ const {
                             <tr v-if="(filmData.countries ?? []).length > 0">
                                 <td class="font-medium align-top">Страна</td>
                                 <td>
-                                    {{
-                                        filmData.countries?.map((country) => (country as CountryResource).name)?.join(', ')
-                                    }}
+                                    <UiCommaExpandable :items="filmData.countries ?? []" v-slot="{item}">
+                                        <span>{{ item.name }}</span>
+                                    </UiCommaExpandable>
                                 </td>
                             </tr>
                             <tr v-if="(filmData.tags ?? []).length > 0">
@@ -146,13 +145,14 @@ const {
                             <tr v-if="(filmData.companies ?? []).length > 0">
                                 <td class="font-medium align-top">Компания</td>
                                 <td>
-                                    <template v-for="(company, index) in filmData.companies">
-                                        {{ index > 0 ? ', ' : ''}}
-                                        <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
-                                                  :to="`/catalog/companies/${(company as CompanyResource).id}`">
-                                            {{ (company as CompanyResource).name }}
-                                        </NuxtLink>
-                                    </template>
+                                    <UiCommaExpandable :items="filmData.companies ?? []">
+                                        <template #default="{item}">
+                                            <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
+                                                      :to="`/catalog/companies/${item.id}`">
+                                                {{ item.name }}
+                                            </NuxtLink>
+                                        </template>
+                                    </UiCommaExpandable>
                                 </td>
                             </tr>
                             </tbody>
