@@ -18,7 +18,7 @@ const expanded = ref<boolean>(false);
            href="#"
            @click="expanded = true">еще {{ items.length - 3 }}</a>
 
-        <a v-else
+        <a v-else-if="expanded && items.length > 3"
            class="text-gray-500 hover:text-gray-400 ms-1.5"
            href="#"
            @click="expanded = false">скрыть</a>
