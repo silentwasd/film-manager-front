@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type PaginatedCollection from "~/types/PaginatedCollection";
-import CountryRepository from "~/repos/management/CountryRepository";
-import {PersonRole} from "~/types/enums/PersonRole";
 import CompanyRepository from "~/repos/management/CompanyRepository";
 import type CompanyResource from "~/resources/management/CompanyResource";
 
@@ -13,9 +11,9 @@ definePageMeta({
 const config = useRuntimeConfig();
 
 useSeoMeta({
-    title        : 'ВКинопоиск',
+    title        : 'Компании // ВКинопоиск',
     description  : 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
-    ogTitle      : 'ВКинопоиск',
+    ogTitle      : 'Компании // ВКинопоиск',
     ogDescription: 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
     ogImage      : config.public.externalUrl + '/img/cinema.png',
     ogUrl        : config.public.externalUrl,
@@ -44,6 +42,11 @@ const columns = [
     {
         key     : 'name',
         label   : 'Наименование',
+        sortable: true
+    },
+    {
+        key     : 'films_count',
+        label   : 'Фильмов',
         sortable: true
     },
     {

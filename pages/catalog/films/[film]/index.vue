@@ -128,7 +128,7 @@ const {
                                 </td>
                             </tr>
                             <tr v-if="(filmData.countries ?? []).length > 0">
-                                <td class="font-medium">Страна</td>
+                                <td class="font-medium align-top">Страна</td>
                                 <td>
                                     {{
                                         filmData.countries?.map((country) => (country as CountryResource).name)?.join(', ')
@@ -144,7 +144,7 @@ const {
                                 </td>
                             </tr>
                             <tr v-if="(filmData.companies ?? []).length > 0">
-                                <td class="font-medium">Компания</td>
+                                <td class="font-medium align-top">Компания</td>
                                 <td>
                                     <template v-for="(company, index) in filmData.companies">
                                         {{ index > 0 ? ', ' : ''}}

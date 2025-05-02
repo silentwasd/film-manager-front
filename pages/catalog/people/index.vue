@@ -16,9 +16,9 @@ const config = useRuntimeConfig();
 const route  = useRoute();
 
 useSeoMeta({
-    title        : 'ВКинопоиск',
+    title        : 'Люди // ВКинопоиск',
     description  : 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
-    ogTitle      : 'ВКинопоиск',
+    ogTitle      : 'Люди // ВКинопоиск',
     ogDescription: 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
     ogImage      : config.public.externalUrl + '/img/cinema.png',
     ogUrl        : config.public.externalUrl,
@@ -211,8 +211,8 @@ async function save(state: any) {
             </template>
 
             <template #roles-data="{row}">
-                <p class="line-clamp-2 text-wrap leading-4">
-                    {{ row.roles.map((role: PersonRole) => personRole(role)).join(', ') }}
+                <p class="line-clamp-2 text-wrap leading-4 max-w-[200px]">
+                    {{ row.roles.map((role: PersonRole, index: number) => index > 0 ? personRole(role).toLowerCase() : personRole(role)).join(', ') }}
                 </p>
             </template>
 

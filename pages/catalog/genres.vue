@@ -49,6 +49,11 @@ const columns = [
         label   : 'Slug'
     },
     {
+        key     : 'films_count',
+        label   : 'Фильмов',
+        sortable: true
+    },
+    {
         key: 'actions'
     }
 ];

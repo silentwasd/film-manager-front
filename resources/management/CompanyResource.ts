@@ -7,4 +7,5 @@ export default interface CompanyResource {
     link: string | null;
     can_edit?: boolean;
     films?: Film[];
+    films_count?: number;
 }

@@ -14,7 +14,6 @@ import type GenreResource from "~/resources/management/GenreResource";
 import type CountryResource from "~/resources/management/CountryResource";
 import TagRepository from "~/repos/management/TagRepository";
 import type TagResource from "~/resources/management/TagResource";
-import CompanyRepository from "~/repos/management/CompanyRepository";
 import type CompanyResource from "~/resources/management/CompanyResource";
 import type Resource from "~/types/Resource";
 
@@ -27,9 +26,9 @@ const route  = useRoute();
 const config = useRuntimeConfig();
 
 useSeoMeta({
-    title        : 'ВКинопоиск',
+    title        : 'Каталог // ВКинопоиск',
     description  : 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
-    ogTitle      : 'ВКинопоиск',
+    ogTitle      : 'Каталог // ВКинопоиск',
     ogDescription: 'Сохрани каждый момент. Отслеживай просмотр и ставь собственные оценки.',
     ogImage      : config.public.externalUrl + '/img/cinema.png',
     ogUrl        : config.public.externalUrl,
