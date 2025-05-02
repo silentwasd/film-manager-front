@@ -115,7 +115,7 @@ const {
                                 </td>
                             </tr>
                             <tr v-if="(filmData.genres ?? []).length > 0">
-                                <td class="font-medium">Жанр</td>
+                                <td class="font-medium align-top">Жанр</td>
                                 <td>
                                     <template v-for="(genre, index) in filmData.genres">
                                         {{ index > 0 ? ', ' : ''}}
