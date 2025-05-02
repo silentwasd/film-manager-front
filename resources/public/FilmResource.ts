@@ -6,6 +6,7 @@ export default interface FilmResource {
     name: string;
     format: FilmFormat;
     cover?: string | File;
+    produced_year?: number;
     release_date?: string;
     description?: string;
     cinema_status: FilmCinemaStatus;

@@ -61,12 +61,8 @@ watch(slowName, () => page.value = 1);
                         <div class="mt-1.5">
                             <p class="truncate text-lg font-medium leading-5">{{ film.name }}</p>
                             <p class="font-light truncate text-sm">
-                        <span>
-                            {{ filmFormat(film.format) }}
-                        </span>
-                                <span class="text-gray-600 dark:text-gray-400 italic ms-1">{{
-                                        film.release_date
-                                    }}</span>
+                                <span>{{ filmFormat(film.format) }}</span>
+                                <span class="text-gray-600 dark:text-gray-400 italic ms-1">{{ film.produced_year }}</span>
                             </p>
                         </div>
                     </NuxtLink>

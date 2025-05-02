@@ -124,10 +124,10 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                                         </p>
                                         <p class="font-light truncate text-sm">
                                             <span>{{ person.film ? filmFormat(person.film.format) : '' }}</span>
-                                            <NuxtTime v-if="person.film?.release_date"
-                                                      :datetime="person.film.release_date"
-                                                      year="numeric"
-                                                      class="text-gray-600 dark:text-gray-400 italic ms-1"/>
+                                            <span v-if="person.film.produced_year"
+                                                  class="text-gray-600 dark:text-gray-400 italic ms-1">
+                                                {{ person.film.produced_year }}
+                                            </span>
                                         </p>
                                     </div>
                                 </NuxtLink>

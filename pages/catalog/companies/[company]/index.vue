@@ -68,10 +68,10 @@ useSeoMeta({
                                 </p>
                                 <p class="font-light truncate text-sm">
                                     <span>{{ filmFormat(film.format) }}</span>
-                                    <NuxtTime v-if="film.release_date"
-                                              :datetime="film.release_date"
-                                              year="numeric"
-                                              class="text-gray-600 dark:text-gray-400 italic ms-1"/>
+                                    <span v-if="film.produced_year"
+                                          class="text-gray-600 dark:text-gray-400 italic ms-1">
+                                        {{ film.produced_year }}
+                                    </span>
                                 </p>
                             </div>
                         </NuxtLink>
