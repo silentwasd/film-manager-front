@@ -137,7 +137,13 @@ save.value = async () => {
                 </USelectMenu>
             </UFormGroup>
 
-            <UFormGroup label="Дата выхода" name="release_date">
+            <UFormGroup label="Год производства" name="produced_year">
+                <UInput type="number"
+                        :min="0"
+                        v-model="state.produced_year"/>
+            </UFormGroup>
+
+            <UFormGroup label="Дата премьеры" name="release_date">
                 <UInput type="date"
                         :model-value="state.release_date ? undater(state.release_date) : undefined"
                         @update:model-value="state.release_date = dater($event)"/>

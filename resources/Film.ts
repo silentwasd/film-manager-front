@@ -13,6 +13,7 @@ export default interface Film {
     original_name: string | null;
     format: FilmFormat;
     cover?: string | File;
+    produced_year?: number;
     release_date?: string;
     description?: string;
     is_mine?: boolean;

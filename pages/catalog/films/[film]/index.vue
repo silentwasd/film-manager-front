@@ -105,13 +105,13 @@ const {
                         <table class="mt-2.5 text-lg">
                             <tbody>
                             <tr>
-                                <td class="w-[150px] font-medium">Формат</td>
+                                <td class="w-[200px] font-medium">Формат</td>
                                 <td>{{ filmFormat(filmData.format) }}</td>
                             </tr>
-                            <tr v-if="filmData.release_date">
-                                <td class="font-medium">Дата выхода</td>
+                            <tr v-if="filmData.produced_year">
+                                <td class="font-medium">Год производства</td>
                                 <td>
-                                    <NuxtTime :datetime="filmData.release_date"/>
+                                    {{ filmData.produced_year }}
                                 </td>
                             </tr>
                             <tr v-if="(filmData.genres ?? []).length > 0">
@@ -153,6 +153,12 @@ const {
                                             </NuxtLink>
                                         </template>
                                     </UiCommaExpandable>
+                                </td>
+                            </tr>
+                            <tr v-if="filmData.release_date">
+                                <td class="font-medium">Дата премьеры</td>
+                                <td>
+                                    <NuxtTime :datetime="filmData.release_date" date-style="long"/>
                                 </td>
                             </tr>
                             </tbody>

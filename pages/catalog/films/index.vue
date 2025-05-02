@@ -84,8 +84,8 @@ let columns = [
         sortable: true,
     },
     {
-        key     : 'release_date',
-        label   : 'Дата выхода',
+        key     : 'produced_year',
+        label   : 'Год',
         sortable: true
     },
     {
