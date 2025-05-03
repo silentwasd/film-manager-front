@@ -63,13 +63,13 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                             <tr v-if="personData.birth_date">
                                 <td class="w-[150px] font-medium">Дата рождения</td>
                                 <td>
-                                    <NuxtTime :datetime="personData.birth_date"/>
+                                    <NuxtTime :datetime="personData.birth_date" date-style="long"/>
                                 </td>
                             </tr>
                             <tr v-if="personData.death_date">
                                 <td class="w-[150px] font-medium">Дата смерти</td>
                                 <td>
-                                    <NuxtTime :datetime="personData.death_date"/>
+                                    <NuxtTime :datetime="personData.death_date" date-style="long"/>
                                 </td>
                             </tr>
                             <tr v-if="personData.sex">
