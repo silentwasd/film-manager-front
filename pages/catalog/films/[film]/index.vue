@@ -26,8 +26,8 @@ const actor    = computed<string | undefined | null>(() => filmData.value?.peopl
 
 let title = `${filmFormat(filmData.value?.format ?? FilmFormat.Film)} "${filmData.value?.name}"`;
 
-if (filmData.value?.release_date) {
-    title += `, ${new Date(filmData.value.release_date).getFullYear()}`;
+if (filmData.value?.produced_year) {
+    title += `, ${filmData.value?.produced_year}`;
 }
 
 if (filmData.value?.original_name) {
