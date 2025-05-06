@@ -124,6 +124,12 @@ save.value = async () => {
                         placeholder="The Jack Who Built The House"/>
             </UFormGroup>
 
+            <UFormGroup label="Фоновая обложка" name="background_cover">
+                <UInput type="file"
+                        accept="image/*"
+                        @input="state.background_cover = $event.target.files[0]"/>
+            </UFormGroup>
+
             <UFormGroup label="Формат" name="format" required>
                 <USelectMenu v-model="state.format"
                              :options="Object.values(FilmFormat)">

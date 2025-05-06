@@ -10,7 +10,7 @@ const expanded = ref<boolean>(false);
     <div>
         <template v-for="(item, index) in items.slice(0, expanded ? items.length : 3)">
             {{ index > 0 ? ', ' : '' }}
-            <slot :item="item"/>
+            <slot :item="item" :index="index"/>
         </template>
 
         <a v-if="!expanded && items.length > 3"

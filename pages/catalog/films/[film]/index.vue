@@ -60,14 +60,21 @@ const {
 
 <template>
     <UMain>
-        <UContainer class="py-5">
-            <div v-if="filmData" class="flex flex-col sm:flex-row gap-5">
+        <div v-if="filmData?.background_cover"
+             class="bg-cover bg-no-repeat bg-top w-full h-[380px] absolute top-0"
+             :style="`background-image: url(${fileUrl(filmData.background_cover as string)});`"></div>
+
+        <div v-if="filmData?.background_cover"
+             class="bg-gradient-to-t from-gray-900 from-30% absolute top-0 w-full h-[500px]"></div>
+
+        <UContainer class="py-5 sm:py-10 relative z-10">
+            <div v-if="filmData" class="flex flex-col sm:flex-row gap-10">
                 <div class="shrink-0">
-                    <div class="sm:sticky sm:top-20 flex flex-col gap-2.5">
+                    <div class="sm:sticky sm:top-[calc(var(--header-height)+2.5rem)] flex flex-col gap-2.5">
                         <img v-if="filmData.cover"
                              :src="fileUrl(filmData.cover)"
                              :alt="filmData.name"
-                             class="block rounded-lg w-full sm:max-w-[250px] sm:max-h-[400px] border dark:border-gray-800"/>
+                             class="block rounded-lg w-full sm:max-w-[250px] sm:max-h-[400px] border dark:border-gray-800/50"/>
 
                         <div v-else
                              class="flex items-center justify-center rounded-lg w-full sm:w-[250px] h-[400px] border dark:border-gray-800">
@@ -96,83 +103,30 @@ const {
                 </div>
 
                 <div class="flex flex-col font-roboto gap-10 grow">
-                    <div class="flex flex-col">
-                        <h1 class="font-black text-4xl leading-9">{{ filmData.name }}</h1>
-                        <h3 v-if="filmData.original_name" class="font-medium text-xl text-gray-400 leading-9">
-                            {{ filmData.original_name }}
-                        </h3>
+                    <div class="flex flex-col gap-5">
+                        <div>
+                            <h1 class="font-black text-4xl leading-9">{{ filmData.name }}</h1>
+                            <h3 v-if="filmData.original_name" class="font-medium text-xl text-gray-300 mt-1">
+                                {{ filmData.original_name }}
+                            </h3>
+                        </div>
 
-                        <table class="mt-2.5 text-lg">
-                            <tbody>
-                            <tr>
-                                <td class="w-[200px] font-medium">Формат</td>
-                                <td>{{ filmFormat(filmData.format) }}</td>
-                            </tr>
-                            <tr v-if="filmData.produced_year">
-                                <td class="font-medium">Год производства</td>
-                                <td>
-                                    {{ filmData.produced_year }}
-                                </td>
-                            </tr>
-                            <tr v-if="(filmData.genres ?? []).length > 0">
-                                <td class="font-medium align-top">Жанр</td>
-                                <td>
-                                    <template v-for="(genre, index) in filmData.genres">
-                                        {{ index > 0 ? ', ' : ''}}
-                                        <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
-                                                  :to="`/genres/${genre.slug}`">
-                                            {{ index > 0 ? genre.name.toLowerCase() : genre.name }}
-                                        </NuxtLink>
-                                    </template>
-                                </td>
-                            </tr>
-                            <tr v-if="(filmData.countries ?? []).length > 0">
-                                <td class="font-medium align-top">Страна</td>
-                                <td>
-                                    <UiCommaExpandable :items="filmData.countries ?? []" v-slot="{item}">
-                                        <span>{{ item.name }}</span>
-                                    </UiCommaExpandable>
-                                </td>
-                            </tr>
-                            <tr v-if="(filmData.tags ?? []).length > 0">
-                                <td class="font-medium">Теги</td>
-                                <td>
-                                    {{
-                                        filmData.tags?.map((tag) => (tag as TagResource).name)?.join(', ')
-                                    }}
-                                </td>
-                            </tr>
-                            <tr v-if="(filmData.companies ?? []).length > 0">
-                                <td class="font-medium align-top">Компания</td>
-                                <td>
-                                    <UiCommaExpandable :items="filmData.companies ?? []">
-                                        <template #default="{item}">
-                                            <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
-                                                      :to="`/catalog/companies/${item.id}`">
-                                                {{ item.name }}
-                                            </NuxtLink>
-                                        </template>
-                                    </UiCommaExpandable>
-                                </td>
-                            </tr>
-                            <tr v-if="filmData.release_date">
-                                <td class="font-medium">Дата премьеры</td>
-                                <td>
-                                    <NuxtTime :datetime="filmData.release_date" date-style="long"/>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <UiFilmInfoTable :film="filmData"/>
 
-                        <p v-for="p in filmData.description?.replaceAll('\r', '')?.split('\n') ?? []"
-                           class="text-xl font-light mt-2.5">
-                            {{ p }}
-                        </p>
+                        <div>
+                            <p v-for="p in filmData.description?.replaceAll('\r', '')?.split('\n') ?? []"
+                               class="text-xl font-light mt-2.5 first-of-type:mt-0">
+                                {{ p }}
+                            </p>
+                        </div>
                     </div>
 
                     <div v-if="filmData.people">
                         <div class="flex justify-between items-center">
-                            <h1 class="font-bold text-2xl">Люди</h1>
+                            <h1 class="font-bold text-2xl">
+                                <span>Люди</span>
+                                <span class="ms-1.5 text-gray-400 font-normal">{{ filmData.people.length }}</span>
+                            </h1>
                         </div>
 
                         <BlockPeople v-if="filmData.people.length > 0"
