@@ -88,7 +88,7 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                                 </td>
                             </tr>
 
-                            <tr v-if="personData.roles">
+                            <tr v-if="(personData.roles ?? []).length > 0">
                                 <td class="w-[150px] font-medium align-top">Деятельность</td>
                                 <td class="font-light">
                                     <p>
