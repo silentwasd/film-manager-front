@@ -118,7 +118,7 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                          class="flex flex-col gap-5">
                         <h1 class="font-bold text-2xl leading-4">
                             <span>Фильмы</span>
-                            <span class="ms-1.5 text-gray-400 font-normal">{{ personData.films?.length }}</span>
+                            <span class="ms-1.5 text-gray-400 font-normal">{{ new Set((personData.films ?? []).map(film => film.film_id)).size }}</span>
                         </h1>
 
                         <div class="flex flex-wrap gap-2.5">
