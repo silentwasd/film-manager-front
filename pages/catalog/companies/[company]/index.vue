@@ -54,16 +54,15 @@ useSeoMeta({
                     <div class="flex flex-wrap gap-5">
                         <NuxtLink
                             v-for="film in companyData.films ?? []"
-                            class="w-[150px]"
+                            class="w-[180px]"
                             :title="film.name"
                             :to="`/catalog/films/${film.id}`">
-                            <img v-if="film?.cover"
-                                 :src="fileUrl(film?.cover as string)"
-                                 :alt="film.name"
-                                 class="w-full h-[200px] object-cover bg-gradient-to-br from-gray-800 to-gray-950 rounded-lg"/>
+                            <div v-if="film?.cover"
+                                 class="w-full h-[260px] bg-cover bg-no-repeat bg-center rounded-lg"
+                                 :style="`background-image: url(${fileUrl(film?.cover as string)});`"/>
 
                             <div class="mt-1.5">
-                                <p class="text-lg font-medium leading-5 truncate">
+                                <p class="font-medium leading-5 truncate">
                                     {{ film.name }}
                                 </p>
                                 <p class="font-light truncate text-sm">
