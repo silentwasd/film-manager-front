@@ -42,11 +42,12 @@ save.value = async () => {
     try {
         await filmRepo.update({
             ...state.value,
-            genres   : state.value.genres?.map(genre => (genre as GenreResource).id),
-            countries: state.value.countries?.map(country => (country as CountryResource).id),
-            tags     : state.value.tags?.map(tag => (tag as TagResource).id),
-            companies: state.value.companies?.map(company => (company as CompanyResource).id),
-            cover    : state.value.cover instanceof File ? state.value.cover : undefined
+            genres          : state.value.genres?.map(genre => (genre as GenreResource).id),
+            countries       : state.value.countries?.map(country => (country as CountryResource).id),
+            tags            : state.value.tags?.map(tag => (tag as TagResource).id),
+            companies       : state.value.companies?.map(company => (company as CompanyResource).id),
+            cover           : state.value.cover instanceof File ? state.value.cover : undefined,
+            background_cover: state.value.background_cover instanceof File ? state.value.background_cover : undefined
         });
 
         await props.refresh();

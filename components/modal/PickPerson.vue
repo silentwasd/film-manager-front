@@ -25,13 +25,39 @@ watch(shown, (value) => {
         refresh();
     }
 });
+
+function makeResource(): PersonResource {
+    return {
+        id           : 0,
+        name         : '',
+        original_name: '',
+        birth_date   : null,
+        death_date   : null,
+        sex          : null,
+        photo        : null,
+        country_id   : null
+    };
+}
+
+const editPerson = ref<PersonResource>();
 </script>
 
 <template>
     <UModal v-model="shown" :ui="{container: 'items-start sm:items-start'}">
         <UCard :ui="{ring: '', body: {padding: 'sm:p-2.5'}}">
-            <UInput placeholder="Поиск..."
-                    v-model="search"/>
+            <div class="flex gap-2.5">
+                <UInput placeholder="Поиск..."
+                        v-model="search"
+                        class="grow"/>
+
+                <div class="shrink-0">
+                    <UTooltip text="Создать">
+                        <UButton icon="i-heroicons-plus-16-solid"
+                                 color="gray"
+                                 @click="editPerson = makeResource()"/>
+                    </UTooltip>
+                </div>
+            </div>
 
             <div v-if="(people?.data ?? []).length > 0"
                  class="flex flex-col pt-2.5">
@@ -61,6 +87,8 @@ watch(shown, (value) => {
                 </div>
             </div>
         </UCard>
+
+        <ModalCreatePerson v-model="editPerson" :refresh="refresh"/>
     </UModal>
 </template>
 

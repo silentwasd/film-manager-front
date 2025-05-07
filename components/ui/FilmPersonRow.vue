@@ -6,7 +6,8 @@ import type PersonResource from "~/resources/PersonResource";
 
 const props = defineProps<{
     filmId: number,
-    person?: PersonResource
+    person?: FilmPersonResource,
+    activeRole?: PersonRole | null
 }>();
 
 const emit = defineEmits<{
@@ -26,6 +27,13 @@ const record = ref<Partial<FilmPersonResource>>(props.person ?? {
     person      : undefined,
     role        : undefined,
     role_details: ''
+});
+
+watch(() => props.activeRole, value => {
+    if (value === null)
+        record.value.role = undefined;
+    else if (value !== undefined)
+        record.value.role = value;
 });
 
 async function create() {
@@ -68,7 +76,8 @@ watchDebounced(record, async () => {
     updating.value = true;
 
     try {
-        await filmPersonRepo.update({...record.value, person_id: record.value.person?.id ?? 0});
+        await filmPersonRepo.update({...record.value, person_id: record.value.person?.id ?? 0})
+        emit('refresh');
     } catch (err: any) {
         toast.add({
             title      : 'Ошибка',
