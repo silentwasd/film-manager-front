@@ -46,7 +46,7 @@ async function create() {
         record.value = {
             id          : 0,
             person      : undefined,
-            role        : undefined,
+            role        : props.activeRole,
             role_details: ''
         };
     } catch (err: any) {
