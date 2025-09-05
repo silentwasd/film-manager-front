@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: .
+      args:
+        NUXT_UI_PRO_LICENSE: ${NUXT_UI_PRO_LICENSE}
+        NUXT_API_URL: ${NUXT_API_URL}
+        NUXT_STORAGE_URL: ${NUXT_STORAGE_URL}
+        NUXT_EXTERNAL_URL: ${NUXT_EXTERNAL_URL}
+        NUXT_METRICS: ${NUXT_METRICS}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

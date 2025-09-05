@@ -1,0 +1,8 @@
+.idea
+.git
+.output
+.nuxt
+node_modules
+Dockerfile
+.gitignore
+.env
