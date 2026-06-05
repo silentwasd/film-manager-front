@@ -13,7 +13,7 @@
     "@nuxt/ui-pro": "^3.3.7",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@vueuse/nuxt": "^12.8.2",
-    "nuxt": "^3.21.7",
+    "nuxt": "^4.4.7",
     "tailwindcss": "^4.3.0",
     "vue": "latest"
   },
