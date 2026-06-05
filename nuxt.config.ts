@@ -4,7 +4,7 @@ export default defineNuxtConfig({
 
     devtools: {enabled: true},
 
-    modules: ["@nuxt/ui-pro", '@nuxtjs/google-fonts', '@vueuse/nuxt'],
+    modules: ["@nuxt/ui", '@nuxtjs/google-fonts', '@vueuse/nuxt'],
 
     css: ['~/assets/css/main.css'],
 
@@ -35,6 +35,15 @@ export default defineNuxtConfig({
         head: {
             meta: [
                 {name: 'viewport', content: 'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'}
+            ]
+        }
+    },
+
+    vite: {
+        optimizeDeps: {
+            include: [
+                '@vue/devtools-core',
+                '@vue/devtools-kit',
             ]
         }
     }
