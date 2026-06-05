@@ -32,19 +32,17 @@ const nav = computed(() => [{
     to     : '/catalog/my-films',
     visible: profile.value
 }, {
-    label  : 'Люди',
-    icon   : 'i-heroicons-users-20-solid',
-    to     : '/catalog/people',
-    visible: profile.value
-},{
-    label  : 'Компании',
-    icon   : 'i-heroicons-building-library-20-solid',
-    to     : '/catalog/companies',
-    visible: profile.value
-}, {
     label   : 'Справочники',
     icon    : 'i-heroicons-inbox-stack-20-solid',
     children: [{
+        label: 'Люди',
+        icon : 'i-heroicons-users-20-solid',
+        to   : '/catalog/people'
+    }, {
+        label: 'Компании',
+        icon : 'i-heroicons-building-library-20-solid',
+        to   : '/catalog/companies'
+    }, ...profile.value?.role == UserRole.Admin ? [{
         label: 'Жанры',
         icon : 'i-heroicons-fire-16-solid',
         to   : '/catalog/genres'
@@ -56,8 +54,8 @@ const nav = computed(() => [{
         label: 'Теги',
         icon : 'i-heroicons-hashtag-solid',
         to   : '/catalog/tags'
-    }],
-    visible : profile.value?.role == UserRole.Admin
+    }] : []],
+    visible : profile.value
 }].filter(item => !item.hasOwnProperty('visible') || item.visible));
 </script>
 
