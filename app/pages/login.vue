@@ -30,6 +30,8 @@ const token      = useToken();
 const toast      = useToast();
 const afterLogin = useCookie<string>('after_login');
 
+const kotonetUrl = computed(() => config.public.apiUrl.replace(/\/api\/?$/, '') + '/auth/kotonet');
+
 async function submit() {
     loading.value = true;
 
@@ -90,6 +92,17 @@ async function submit() {
                                  color="neutral"
                                  class="w-full"
                                  to="/register"/>
+
+                        <USeparator label="или" class="my-0.5"/>
+
+                        <UButton label="Войти через Kotonet"
+                                 icon="i-heroicons-globe-alt"
+                                 size="lg"
+                                 color="neutral"
+                                 variant="subtle"
+                                 class="w-full justify-center"
+                                 :to="kotonetUrl"
+                                 external/>
                     </div>
                 </div>
             </UForm>
