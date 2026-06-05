@@ -12,8 +12,7 @@ export default defineNuxtConfig({
         public: {
             apiUrl     : process.env.NUXT_API_URL,
             storageUrl : process.env.NUXT_STORAGE_URL,
-            externalUrl: process.env.NUXT_EXTERNAL_URL,
-            metrics    : process.env.NUXT_METRICS
+            externalUrl: process.env.NUXT_EXTERNAL_URL
         }
     },
 
