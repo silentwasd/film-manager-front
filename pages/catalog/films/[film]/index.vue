@@ -3,9 +3,7 @@ import FilmRepository from "~/repos/FilmRepository";
 import type Film from "~/resources/Film";
 import {UserRole} from "~/types/enums/UserRole";
 import {PersonRole} from "~/types/enums/PersonRole";
-import type CountryResource from "~/resources/management/CountryResource";
 import FeedbackRepository from "~/repos/FeedbackRepository";
-import type TagResource from "~/resources/management/TagResource";
 import {FilmFormat} from "~/types/enums/FilmFormat";
 
 definePageMeta({
@@ -18,7 +16,7 @@ const filmId           = parseInt(route.params.film as string);
 const filmRepo         = new FilmRepository();
 const {state: profile} = useProfile();
 
-const {data: film, refresh} = await filmRepo.show(`film.${filmId}`, filmId);
+const {data: film} = await filmRepo.show(`film.${filmId}`, filmId);
 
 const filmData = computed<Film | null>(() => film.value?.data || null);
 const director = computed<string | undefined | null>(() => filmData.value?.people?.find(person => person.role == PersonRole.Director)?.person?.name);
@@ -61,11 +59,11 @@ const {
 <template>
     <UMain>
         <div v-if="filmData?.background_cover"
-             class="bg-cover bg-no-repeat bg-top w-full h-[380px] absolute top-0"
+             class="bg-cover bg-no-repeat bg-top w-full h-95 absolute top-0"
              :style="`background-image: url(${fileUrl(filmData.background_cover as string)});`"></div>
 
         <div v-if="filmData?.background_cover"
-             class="bg-gradient-to-t from-gray-900 from-30% absolute top-0 w-full h-[500px]"></div>
+             class="bg-linear-to-t from-neutral-900 from-30% absolute top-0 w-full h-125"></div>
 
         <UContainer class="py-5 sm:py-10 relative z-10">
             <div v-if="filmData" class="flex flex-col sm:flex-row gap-10">
@@ -74,10 +72,10 @@ const {
                         <img v-if="filmData.cover"
                              :src="fileUrl(filmData.cover)"
                              :alt="filmData.name"
-                             class="block rounded-lg w-full sm:max-w-[250px] sm:max-h-[400px] border dark:border-gray-800/50"/>
+                             class="block rounded-lg w-full sm:max-w-62.5 sm:max-h-100 border dark:border-neutral-800/50"/>
 
                         <div v-else
-                             class="flex items-center justify-center rounded-lg w-full sm:w-[250px] h-[400px] border dark:border-gray-800">
+                             class="flex items-center justify-center rounded-lg w-full sm:w-62.5 h-100 border dark:border-neutral-800">
                             <UIcon name="i-heroicons-film" class="text-8xl"/>
                         </div>
 
@@ -87,7 +85,7 @@ const {
                         <LazyUiWatcherStatusCreateOrUpdate v-if="profile" :film-id="filmData.id"/>
 
                         <UButton v-else
-                                 color="gray"
+                                 color="neutral"
                                  label="В мои фильмы"
                                  icon="i-heroicons-plus"
                                  class="w-full"
@@ -95,7 +93,7 @@ const {
 
                         <UButton
                             v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"
-                            color="gray"
+                            color="neutral"
                             label="Редактировать"
                             icon="i-heroicons-pencil-solid"
                             :to="`/catalog/films/${filmData.id}/edit`"/>
@@ -106,7 +104,7 @@ const {
                     <div class="flex flex-col gap-5">
                         <div>
                             <h1 class="font-black text-4xl leading-9">{{ filmData.name }}</h1>
-                            <h3 v-if="filmData.original_name" class="font-medium text-xl text-gray-300 mt-1">
+                            <h3 v-if="filmData.original_name" class="font-medium text-xl text-neutral-300 mt-1">
                                 {{ filmData.original_name }}
                             </h3>
                         </div>
@@ -125,7 +123,7 @@ const {
                         <div class="flex justify-between items-center">
                             <h1 class="font-bold text-2xl">
                                 <span>Люди</span>
-                                <span class="ms-1.5 text-gray-400 font-normal">{{ filmData.people.length }}</span>
+                                <span class="ms-1.5 text-neutral-400 font-normal">{{ filmData.people.length }}</span>
                             </h1>
                         </div>
 

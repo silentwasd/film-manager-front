@@ -79,7 +79,7 @@ async function remove(genre: GenreResource) {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         removing.value[genre.id] = false;
@@ -115,7 +115,7 @@ async function save(state: any) {
 
             <template #actions>
                 <UButton icon="i-heroicons-plus"
-                         color="gray"
+                         color="neutral"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -129,14 +129,14 @@ async function save(state: any) {
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip text="Изменить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-pencil-solid"
                                  square
                                  @click="editRow = row"/>
                     </UTooltip>
 
                     <UTooltip text="Удалить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>
@@ -152,21 +152,21 @@ async function save(state: any) {
         <template #edit-title>Жанр "{{ editRow?.name }}"</template>
 
         <template #default="{state}">
-            <UFormGroup label="Наименование" name="name" required>
-                <UInput v-model="state.name" placeholder="Комедия"/>
-            </UFormGroup>
+            <UFormField label="Наименование" name="name" required>
+                <UInput v-model="state.name" placeholder="Комедия" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Slug" name="slug" required>
-                <UInput v-model="state.slug" placeholder="comedy"/>
-            </UFormGroup>
+            <UFormField label="Slug" name="slug" required>
+                <UInput v-model="state.slug" placeholder="comedy" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Иконка" name="icon">
-                <UInput v-model="state.icon" placeholder="i-mdi-pistol"/>
-            </UFormGroup>
+            <UFormField label="Иконка" name="icon">
+                <UInput v-model="state.icon" placeholder="i-mdi-pistol" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Описание" name="description">
-                <UTextarea v-model="state.description" placeholder="Это весело."/>
-            </UFormGroup>
+            <UFormField label="Описание" name="description">
+                <UTextarea v-model="state.description" placeholder="Это весело." class="w-full"/>
+            </UFormField>
         </template>
     </ModalEditModel>
 </template>

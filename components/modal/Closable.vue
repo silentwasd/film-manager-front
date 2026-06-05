@@ -15,7 +15,7 @@ const shown = defineModel<boolean>({default: () => false});
                         <slot name="title">{{ title ?? 'Пум-пум' }}</slot>
                     </h3>
 
-                    <UButton icon="i-heroicons-x-mark" color="gray" variant="link"
+                    <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
                              square size="xl" :padded="false" @click="shown = false"/>
                 </div>
             </template>

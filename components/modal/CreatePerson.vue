@@ -30,50 +30,56 @@ async function save(state: any) {
         <template #edit-title="{state}">Человек #{{ state.id }}</template>
 
         <template #default="{state}">
-            <UFormGroup label="Полное имя" name="name" required>
-                <UInput v-model="state.name" placeholder="Стэнли Кубрик"/>
-            </UFormGroup>
+            <UFormField label="Полное имя" name="name" required>
+                <UInput v-model="state.name" placeholder="Стэнли Кубрик" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Оригинальное полное имя" name="original_name" required>
-                <UInput v-model="state.original_name" placeholder="Stanley Kubrick"/>
-            </UFormGroup>
+            <UFormField label="Оригинальное полное имя" name="original_name" required>
+                <UInput v-model="state.original_name" placeholder="Stanley Kubrick" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Дата рождения" name="birth_date">
+            <UFormField label="Дата рождения" name="birth_date">
                 <UInput type="date"
+                        class="w-full"
                         :model-value="state.birth_date ? undater(state.birth_date) : null"
                         @update:model-value="state.birth_date = dater($event)"/>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Дата смерти" name="death_date">
+            <UFormField label="Дата смерти" name="death_date">
                 <UInput type="date"
+                        class="w-full"
                         :model-value="state.death_date ? undater(state.death_date) : null"
                         @update:model-value="state.death_date = dater($event)"/>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Пол" name="sex">
-                <USelectMenu :options="Object.values(PersonSex)"
+            <UFormField label="Пол" name="sex">
+                <USelectMenu :items="Object.values(PersonSex)"
                              placeholder="Выберите пол из списка"
+                             class="w-full"
                              v-model="state.sex">
-                    <template #option="{option}">
-                        {{ personSex(option) }}
+                    <template #item-label="{item}">
+                        {{ personSex(item) }}
                     </template>
 
-                    <template v-if="state.sex" #label>
+                    <template v-if="state.sex" #default>
                         {{ personSex(state.sex) }}
                     </template>
                 </USelectMenu>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Фото" name="photo">
-                <UInput type="file" @input="state.photo = $event.target.files[0]"/>
-            </UFormGroup>
+            <UFormField label="Фото" name="photo">
+                <UInput type="file"
+                        class="w-full"
+                        @input="state.photo = $event.target.files[0]"/>
+            </UFormField>
 
-            <UFormGroup label="Страна" name="country_id">
+            <UFormField label="Страна" name="country_id">
                 <UiRepoSearchSelectId :repo="new CountryRepository()"
                                       placeholder="Выберите страну из списка"
+                                      class="w-full"
                                       v-model="state.country_id">
                 </UiRepoSearchSelectId>
-            </UFormGroup>
+            </UFormField>
         </template>
     </ModalEditModel>
 </template>

@@ -2,18 +2,18 @@
 import {FilmWatchStatus} from "~/types/enums/FilmWatchStatus";
 
 const watchStatusOptions = [
-    {label: 'Любой', value: undefined},
-    {label: 'Можно посмотреть', value: FilmWatchStatus.ToWatch},
-    {label: 'Нужно досмотреть', value: FilmWatchStatus.MustFinish},
-    {label: 'Просмотрено', value: FilmWatchStatus.Watched},
-    {label: 'Пропущено', value: FilmWatchStatus.Dropped},
+    {label: 'Любой', id: undefined},
+    {label: 'Можно посмотреть', id: FilmWatchStatus.ToWatch},
+    {label: 'Нужно досмотреть', id: FilmWatchStatus.MustFinish},
+    {label: 'Просмотрено', id: FilmWatchStatus.Watched},
+    {label: 'Пропущено', id: FilmWatchStatus.Dropped},
 ];
 </script>
 
 <template>
-    <USelectMenu :options="watchStatusOptions"
+    <USelectMenu :items="watchStatusOptions"
                  class="w-full md:w-auto"
-                 value-attribute="value"/>
+                 value-key="id"/>
 </template>
 
 <style scoped>

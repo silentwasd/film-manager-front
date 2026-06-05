@@ -70,7 +70,7 @@ async function remove(genre: TagResource) {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         removing.value[genre.id] = false;
@@ -106,7 +106,7 @@ async function save(state: any) {
 
             <template #actions>
                 <UButton icon="i-heroicons-plus"
-                         color="gray"
+                         color="neutral"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -115,14 +115,14 @@ async function save(state: any) {
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip text="Изменить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-pencil-solid"
                                  square
                                  @click="editRow = row"/>
                     </UTooltip>
 
                     <UTooltip text="Удалить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>
@@ -138,9 +138,9 @@ async function save(state: any) {
         <template #edit-title="{state}">Тег #{{ state.id }}</template>
 
         <template #default="{state}">
-            <UFormGroup label="Наименование" name="name" required>
-                <UInput v-model="state.name" placeholder="Аниме"/>
-            </UFormGroup>
+            <UFormField label="Наименование" name="name" required>
+                <UInput v-model="state.name" placeholder="Аниме" class="w-full"/>
+            </UFormField>
         </template>
     </ModalEditModel>
 </template>

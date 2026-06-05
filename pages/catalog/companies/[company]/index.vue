@@ -68,7 +68,7 @@ useSeoMeta({
                                 <p class="font-light truncate text-sm">
                                     <span>{{ filmFormat(film.format) }}</span>
                                     <span v-if="film.produced_year"
-                                          class="text-gray-600 dark:text-gray-400 italic ms-1">
+                                          class="text-neutral-600 dark:text-neutral-400 italic ms-1">
                                         {{ film.produced_year }}
                                     </span>
                                 </p>

@@ -2,15 +2,15 @@
 import {PersonRole} from "~/types/enums/PersonRole";
 
 const roleOptions = [
-    {label: 'Любая', value: undefined},
-    ...Object.keys(PersonRole).map(key => ({label: personRole(PersonRole[key]), value: PersonRole[key]}))
+    {label: 'Любая', id: undefined},
+    ...Object.values(PersonRole).map(value => ({label: personRole(value), id: value}))
 ];
 </script>
 
 <template>
-    <USelectMenu :options="roleOptions"
+    <USelectMenu :items="roleOptions"
                  class="w-full md:w-auto"
-                 value-attribute="value"/>
+                 value-key="id"/>
 </template>
 
 <style scoped>

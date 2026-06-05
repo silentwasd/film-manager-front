@@ -7,10 +7,10 @@ const props = defineProps<{
 }>();
 
 const watchStatusOptions = [
-    {label: 'Можно посмотреть', value: FilmWatchStatus.ToWatch},
-    {label: 'Нужно досмотреть', value: FilmWatchStatus.MustFinish},
-    {label: 'Просмотрено', value: FilmWatchStatus.Watched},
-    {label: 'Пропущено', value: FilmWatchStatus.Dropped},
+    {label: 'Можно посмотреть', id: FilmWatchStatus.ToWatch},
+    {label: 'Нужно досмотреть', id: FilmWatchStatus.MustFinish},
+    {label: 'Просмотрено', id: FilmWatchStatus.Watched},
+    {label: 'Пропущено', id: FilmWatchStatus.Dropped},
 ];
 
 const repo = new FilmWatcherRepository();
@@ -68,15 +68,16 @@ onMounted(async () => {
 <template>
     <div v-if="ready">
         <USelectMenu v-if="status !== undefined"
-                     :options="watchStatusOptions"
-                     value-attribute="value"
+                     value-key="id"
+                     class="w-full"
+                     :items="watchStatusOptions"
                      :loading="updating"
                      :disabled="updating"
                      :model-value="status"
                      @update:model-value="update"/>
 
         <UButton v-else
-                 color="gray"
+                 color="neutral"
                  label="В мои фильмы"
                  icon="i-heroicons-plus"
                  class="w-full"

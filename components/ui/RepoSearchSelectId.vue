@@ -11,7 +11,10 @@ const model = defineModel<string | number | boolean | Record<string, any> | unkn
 
 const loading = ref<boolean>(false);
 
-const options = ref<any>([]);
+const items = ref<any[]>([]);
+
+const searchTerm = ref<string>('');
+const searchTermDebounced = refDebounced(searchTerm, 200);
 
 async function search(query: string) {
     loading.value = true;
@@ -20,32 +23,31 @@ async function search(query: string) {
 
     loading.value = false;
 
-    const data = formats.data;
-
-    options.value = data;
-
-    return data;
+    items.value = formats.data;
 }
+
+watch(searchTermDebounced, query => search(query));
+
+onMounted(() => search(''));
 </script>
 
 <template>
     <USelectMenu v-model="model"
+                 v-model:search-term="searchTerm"
+                 :items="items"
                  :loading="loading"
-                 :searchable="search"
-                 :searchable-placeholder="searchablePlaceholder ?? 'Поиск...'"
                  :placeholder="placeholder"
-                 option-attribute="name"
-                 value-attribute="id"
-                 clear-search-on-close
-                 trailing>
-        <template #option="{option}">
-            <slot :option="option"></slot>
+                 :search-input="{ placeholder: searchablePlaceholder ?? 'Поиск...' }"
+                 label-key="name"
+                 value-key="id"
+                 ignore-filter>
+        <template v-if="$slots.default" #item="{ item }">
+            <slot :option="item"></slot>
         </template>
 
-        <template #label>
-            <slot name="label" :options="options">
-                {{ options.find((option: any) => option.id === model)?.name ?? placeholder }}
-            </slot>
+        <template #empty="{ searchTerm }">
+            <template v-if="searchTerm">По запросу "{{ searchTerm }}" ничего не найдено.</template>
+            <template v-else>Ничего не найдено</template>
         </template>
     </USelectMenu>
 </template>

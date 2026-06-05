@@ -49,7 +49,7 @@ async function save() {
                             <slot name="title" :state="state">Пум-пум</slot>
                         </h3>
 
-                        <UButton icon="i-heroicons-x-mark" color="gray" variant="link"
+                        <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
                                  square size="xl" :padded="false" @click="model = false"/>
                     </div>
                 </template>
@@ -65,7 +65,7 @@ async function save() {
                             Сохранить
                         </UButton>
 
-                        <UButton color="gray" class="ms-2.5"
+                        <UButton color="neutral" class="ms-2.5"
                                  :disabled="saving" @click="model = false">
                             Отменить
                         </UButton>

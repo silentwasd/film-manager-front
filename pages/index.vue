@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import FilmRepository from "~/repos/public/FilmRepository";
-import {FilmCinemaStatus} from "~/types/enums/FilmCinemaStatus";
 
 definePageMeta({
     layout: 'management'
@@ -24,7 +23,7 @@ const filmRepo              = new FilmRepository();
 const name                  = ref<string>('');
 const slowName              = useThrottle(name, 500);
 const page                  = ref<number>(1);
-const {data: films, status} = await filmRepo.lazyList(() => ({
+const {data: films} = await filmRepo.lazyList(() => ({
     name: slowName.value,
     page: page.value
 }));
@@ -39,10 +38,10 @@ watch(slowName, () => page.value = 1);
                 <UInput size="xl"
                         v-model="name"
                         placeholder="Найти фильм..."
-                        class="mb-10"/>
+                        class="mb-10 w-full"/>
 
                 <div class="flex justify-center">
-                    <UPagination v-model="page"
+                    <UPagination v-model:page="page"
                                  class="mb-10"
                                  size="xl"
                                  :page-count="films?.meta.per_page"
@@ -56,20 +55,22 @@ watch(slowName, () => page.value = 1);
                         <img v-if="film.cover"
                              :src="fileUrl(film.cover)"
                              :alt="film.name"
-                             class="w-full h-[200px] md:h-[250px] object-contain bg-gradient-to-br from-gray-800 to-gray-950 rounded-lg"/>
+                             class="w-full h-50 md:h-62.5 object-contain bg-linear-to-br from-neutral-800 to-neutral-950 rounded-lg"/>
 
                         <div class="mt-1.5">
                             <p class="truncate text-lg font-medium leading-5">{{ film.name }}</p>
                             <p class="font-light truncate text-sm">
                                 <span>{{ filmFormat(film.format) }}</span>
-                                <span class="text-gray-600 dark:text-gray-400 italic ms-1">{{ film.produced_year }}</span>
+                                <span class="text-neutral-600 dark:text-neutral-400 italic ms-1">{{
+                                        film.produced_year
+                                    }}</span>
                             </p>
                         </div>
                     </NuxtLink>
                 </div>
 
                 <div class="flex justify-center">
-                    <UPagination v-model="page"
+                    <UPagination v-model:page="page"
                                  class="mt-10"
                                  size="xl"
                                  :page-count="films?.meta.per_page"

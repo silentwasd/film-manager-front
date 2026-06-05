@@ -163,15 +163,15 @@ function makeResource(): Partial<Film> {
 }
 
 const watchStatusOptions = [
-    {label: 'Можно посмотреть', value: FilmWatchStatus.ToWatch},
-    {label: 'Нужно досмотреть', value: FilmWatchStatus.MustFinish},
-    {label: 'Просмотрено', value: FilmWatchStatus.Watched},
-    {label: 'Пропущено', value: FilmWatchStatus.Dropped},
+    {label: 'Можно посмотреть', id: FilmWatchStatus.ToWatch},
+    {label: 'Нужно досмотреть', id: FilmWatchStatus.MustFinish},
+    {label: 'Просмотрено', id: FilmWatchStatus.Watched},
+    {label: 'Пропущено', id: FilmWatchStatus.Dropped},
 ];
 
-const formatOptions = Object.keys(FilmFormat).map(key => ({
-    label: filmFormat(FilmFormat[key]),
-    value: FilmFormat[key]
+const formatOptions: { label: string; id: FilmFormat }[] = Object.values(FilmFormat).map(value => ({
+    label: filmFormat(value),
+    id   : value
 }));
 
 const filmWatcherRepo = new FilmWatcherRepository();
@@ -197,16 +197,18 @@ const filmWatcherRepo = new FilmWatcherRepository();
                 <UiRepoSearchSelectId :repo="new PersonRepository()"
                                       placeholder="Фильтр по личностям"
                                       multiple
-                                      class="w-[250px]"
+                                      class="w-62.5"
                                       v-model="people">
                     <template #default="{option}">
                         <div class="flex items-center gap-2">
                             <img :src="option.photo ? fileUrl(option.photo) : '/img/person.jpg'"
-                                 class="w-10 h-10 object-cover rounded shrink-0"/>
+                                 class="w-10 h-10 object-cover rounded shrink-0"
+                                 :alt="option.name"/>
 
                             <div class="grow">
                                 <p class="font-medium leading-4">{{ option.name }}</p>
-                                <p class="text-xs">{{ option.roles.map(role => personRole(role)).join(', ') }}</p>
+                                <p class="text-xs">
+                                    {{ option.roles.map((role: PersonRole) => personRole(role)).join(', ') }}</p>
                             </div>
                         </div>
                     </template>
@@ -232,7 +234,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
             <template #actions>
                 <UButton icon="i-heroicons-plus"
-                         color="gray"
+                         color="neutral"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -263,7 +265,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
             </template>
 
             <template #genres-data="{row}">
-                <p class="line-clamp-2 text-wrap max-w-[100px] leading-4">
+                <p class="line-clamp-2 text-wrap max-w-25 leading-4">
                     {{ row.genres.map((genre: GenreResource) => genre.name).join(', ') }}
                 </p>
             </template>
@@ -296,14 +298,14 @@ const filmWatcherRepo = new FilmWatcherRepository();
             <template #actions-data="{row}">
                 <div class="flex gap-2.5 justify-end">
                     <UTooltip text="Перейти">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-arrow-right"
                                  square
                                  :to="`/catalog/films/${row.id}`"/>
                     </UTooltip>
 
                     <UTooltip v-if="row.can_edit" text="Изменить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-pencil-solid"
                                  square
                                  :to="`/catalog/films/${row.id}/edit`"/>
@@ -311,7 +313,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
                     <UTooltip v-if="!row.is_mine"
                               text="В мои фильмы">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-plus"
                                  square
                                  @click="addRow = row"/>
@@ -319,14 +321,14 @@ const filmWatcherRepo = new FilmWatcherRepository();
 
                     <UTooltip v-else
                               text="Мой фильм">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  disabled
                                  icon="i-heroicons-check-circle-16-solid"
                                  square/>
                     </UTooltip>
 
                     <UTooltip v-if="row.can_edit" text="Удалить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  square
                                  @click="removeRow = row"/>
@@ -348,29 +350,31 @@ const filmWatcherRepo = new FilmWatcherRepository();
         <template #edit-title="{state}">Фильм #{{ state.id }}</template>
 
         <template #default="{state}">
-            <UFormGroup label="Наименование" name="name" required>
-                <UInput v-model="state.name" placeholder="Джек который построил дом"/>
-            </UFormGroup>
+            <UFormField label="Наименование" name="name" required>
+                <UInput v-model="state.name" placeholder="Джек который построил дом" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Формат" name="format" required>
+            <UFormField label="Формат" name="format" required>
                 <USelectMenu v-model="state.format"
-                             :options="formatOptions"
-                             value-attribute="value"/>
-            </UFormGroup>
+                             :items="formatOptions"
+                             value-key="id"
+                             class="w-full"/>
+            </UFormField>
         </template>
     </ModalEditModel>
 
     <ModalEditModel v-model="addRow"
-                    :save="(state: any) => filmWatcherRepo.store({film_id: addRow.id, status: state.status}).then(() => refresh())">
+                    :save="(state: any) => filmWatcherRepo.store({film_id: addRow?.id, status: state.status}).then(() => refresh())">
         <template #edit-title="{state}">Фильм #{{ state.id }}</template>
 
         <template #default="{state}">
-            <UFormGroup label="Статус просмотра" name="status">
-                <USelectMenu :options="watchStatusOptions"
-                             value-attribute="value"
+            <UFormField label="Статус просмотра" name="status">
+                <USelectMenu v-model="state.status"
+                             :items="watchStatusOptions"
                              placeholder="Выберите статус из списка"
-                             v-model="state.status"/>
-            </UFormGroup>
+                             value-key="id"
+                             class="w-full"/>
+            </UFormField>
         </template>
     </ModalEditModel>
 </template>

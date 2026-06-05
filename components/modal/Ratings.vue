@@ -76,12 +76,12 @@ async function remove(data: Rating) {
                 <div class="flex flex-row">
                     <h3 class="font-semibold text-lg basis-full">Рейтинги</h3>
 
-                    <UButton icon="i-heroicons-x-mark" color="gray" variant="link"
+                    <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
                              square size="xl" :padded="false" @click="film = undefined"/>
                 </div>
             </template>
 
-            <UButton color="gray"
+            <UButton color="neutral"
                      icon="i-heroicons-plus"
                      @click="ratings.unshift(makeRating())">
                 Добавить
@@ -96,9 +96,9 @@ async function remove(data: Rating) {
                     </template>
 
                     <div class="flex flex-col gap-2.5">
-                        <UFormGroup label="Комментарий">
+                        <UFormField label="Комментарий">
                             <UInput v-model="rating.data.comment"/>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
 
                     <template #footer>
@@ -109,7 +109,7 @@ async function remove(data: Rating) {
                                 Сохранить
                             </UButton>
 
-                            <UButton color="red"
+                            <UButton color="error"
                                      icon="i-heroicons-trash"
                                      size="xs"
                                      @click="remove(rating)">

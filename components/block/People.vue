@@ -63,7 +63,7 @@ const activeRole = ref<PersonRole | null>(null);
             <div v-for="role in roles.filter(_role => people.filter(person => person.role == _role).length > 0 && (activeRole ? _role == activeRole : true))">
                 <h3 class="text-lg font-semibold mb-2.5">
                     <span>{{ personRole(role) }}</span>
-                    <span class="font-normal ms-1.5 text-gray-400">{{
+                    <span class="font-normal ms-1.5 text-neutral-400">{{
                             people.filter(person => person.role == role).length
                         }}</span>
                 </h3>
@@ -90,7 +90,7 @@ const activeRole = ref<PersonRole | null>(null);
 
         <div v-if="people.length > 6" class="flex justify-center mt-5">
             <UButton :label="details ? 'Скрыть' : 'Показать больше'"
-                     color="gray"
+                     color="neutral"
                      size="xl"
                      @click="details = !details"/>
         </div>

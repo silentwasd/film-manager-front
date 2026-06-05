@@ -6,7 +6,7 @@ defineEmits<{
 
 <template>
     <UButton icon="i-heroicons-x-mark"
-             color="gray"
+             color="neutral"
              class="w-full md:w-auto"
              @click="$emit('clear')">
         Очистить фильтры

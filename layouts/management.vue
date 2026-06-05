@@ -67,45 +67,49 @@ const nav = computed(() => [{
     </Head>
 
     <div>
-        <UHeader :links="nav">
-            <template #logo>
+        <UHeader>
+            <template #title>
                 <div class="flex items-center gap-2.5">
                     <UIcon name="i-heroicons-film" class="text-3xl shrink-0"/>
                     <h1 class="grow font-roboto font-black">ВКинопоиск</h1>
                 </div>
             </template>
 
+            <UNavigationMenu :items="nav"/>
+
             <template #right>
+                <UColorModeButton color="neutral" variant="link"/>
+
                 <UButton v-if="profile"
                          icon="i-heroicons-arrow-right-start-on-rectangle-20-solid"
                          variant="link"
-                         color="gray"
+                         color="neutral"
                          @click="logout"/>
 
                 <UButton v-else
                          icon="i-heroicons-arrow-right-end-on-rectangle-20-solid"
                          variant="link"
-                         color="gray"
+                         color="neutral"
                          to="/login"/>
             </template>
         </UHeader>
 
         <slot/>
 
-        <UFooter class="bg-gray-200 dark:bg-gray-800">
+        <UFooter class="bg-neutral-200 dark:bg-neutral-800">
             <template #left>
                 <p class="font-roboto text-sm">Сервис не имеет никакого отношения к Кинопоиску!</p>
             </template>
 
             <template #right>
                 <UButton icon="i-simple-icons-telegram"
-                         color="gray"
+                         color="neutral"
                          variant="ghost"
                          to="https://t.me/vkinopoiskruch"
                          target="_blank"/>
 
                 <UButton icon="i-simple-icons-github"
-                         color="gray"
+                         color="neutral"
                          variant="ghost"
                          to="https://github.com/silentwasd/film-manager"
                          target="_blank"/>

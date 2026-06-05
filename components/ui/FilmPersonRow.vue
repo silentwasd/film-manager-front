@@ -2,7 +2,6 @@
 import {PersonRole} from "~/types/enums/PersonRole";
 import FilmPersonRepository from "~/repos/FilmPersonRepository";
 import type FilmPersonResource from "~/resources/FilmPersonResource";
-import type PersonResource from "~/resources/PersonResource";
 
 const props = defineProps<{
     filmId: number,
@@ -62,7 +61,7 @@ async function create() {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         creating.value = false;
@@ -82,7 +81,7 @@ watchDebounced(record, async () => {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         updating.value = false;
@@ -99,7 +98,7 @@ async function remove() {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         removing.value = false;
@@ -126,34 +125,36 @@ async function remove() {
 
                 <UForm ref="form" :state="record">
                     <div class="flex items-start gap-2.5 w-full">
-                        <UFormGroup name="role" class="w-1/2">
-                            <USelectMenu :options="Object.values(PersonRole)"
+                        <UFormField name="role" class="w-1/2">
+                            <USelectMenu :items="Object.values(PersonRole)"
+                                         class="w-full"
                                          placeholder="Выберите роль из списка"
                                          v-model="record.role">
-                                <template #option="{option}">
-                                    {{ personRole(option) }}
+                                <template #item-label="{item}">
+                                    {{ personRole(item) }}
                                 </template>
 
-                                <template v-if="record.role" #label>
+                                <template v-if="record.role" #default>
                                     {{ personRole(record.role) }}
                                 </template>
                             </USelectMenu>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="role_details" class="w-1/2">
+                        <UFormField name="role_details" class="w-1/2">
                             <UInput placeholder="Доп. информация"
+                                    class="w-full"
                                     v-model="record.role_details"/>
-                        </UFormGroup>
+                        </UFormField>
 
                         <UButton v-if="record.id == 0"
-                                 color="gray"
+                                 color="neutral"
                                  icon="i-heroicons-plus"
                                  :loading="creating"
                                  :disabled="creating || !record.person"
                                  @click="create"/>
 
                         <UButton v-else
-                                 color="gray"
+                                 color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  :loading="updating || removing"
                                  @click="remove"/>

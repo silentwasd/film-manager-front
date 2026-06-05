@@ -77,7 +77,7 @@ async function remove(company: CompanyResource) {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         removing.value[company.id] = false;
@@ -120,7 +120,7 @@ async function save(state: any) {
 
             <template #actions>
                 <UButton icon="i-heroicons-plus"
-                         color="gray"
+                         color="neutral"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -129,7 +129,7 @@ async function save(state: any) {
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip v-if="row.link" text="Перейти на сайт">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-globe-alt-solid"
                                  square
                                  target="_blank"
@@ -137,14 +137,14 @@ async function save(state: any) {
                     </UTooltip>
 
                     <UTooltip v-if="row.can_edit" text="Изменить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-pencil-solid"
                                  square
                                  @click="editRow = row"/>
                     </UTooltip>
 
                     <UTooltip v-if="row.can_edit" text="Удалить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>
@@ -161,20 +161,21 @@ async function save(state: any) {
         <template #edit-title="{state}">Компания #{{ state.id }}</template>
 
         <template #default="{state}">
-            <UFormGroup label="Наименование" name="name" required>
-                <UInput v-model="state.name" placeholder="Водород"/>
-            </UFormGroup>
+            <UFormField label="Наименование" name="name" required>
+                <UInput v-model="state.name" placeholder="Водород" class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Описание" name="description">
+            <UFormField label="Описание" name="description">
                 <UTextarea v-model="state.description"
                            autoresize
                            :maxrows="10"
+                           class="w-full"
                            placeholder="Как вода, но водород."/>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Ссылка на сайт" name="link">
-                <UInput v-model="state.link" placeholder="https://example.com"/>
-            </UFormGroup>
+            <UFormField label="Ссылка на сайт" name="link">
+                <UInput v-model="state.link" placeholder="https://example.com" class="w-full"/>
+            </UFormField>
         </template>
     </ModalEditModel>
 </template>

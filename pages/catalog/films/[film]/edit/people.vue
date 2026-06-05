@@ -8,13 +8,13 @@ const props = defineProps<{
     refresh: () => Promise<void>
 }>();
 
-const saving = defineModel<boolean>('saving');
+defineModel<boolean>('saving');
 const save   = defineModel<() => Promise<void>>('save');
 
 save.value = undefined;
 
 const personRepo                                     = new FilmPersonRepository(props.film.id);
-const {data: people, refresh: refreshPeople, status} = await personRepo.list(`film.${props.film.id}.people`);
+const {data: people, refresh: refreshPeople} = await personRepo.list(`film.${props.film.id}.people`);
 
 const roles      = Object.values(PersonRole);
 const activeRole = ref<PersonRole | null>(null);
@@ -24,12 +24,12 @@ const activeRole = ref<PersonRole | null>(null);
     <div class="flex flex-col gap-5 py-5">
         <div class="flex flex-wrap gap-2.5">
             <UButton label="Все"
-                     :color="activeRole ? 'gray' : 'primary'"
+                     :color="activeRole ? 'neutral' : 'primary'"
                      @click="activeRole = null"/>
 
             <UButton v-for="role in roles"
                      :label="personRole(role)"
-                     :color="activeRole == role ? 'primary' : 'gray'"
+                     :color="activeRole == role ? 'primary' : 'neutral'"
                      @click="activeRole = role"/>
         </div>
 
@@ -53,7 +53,7 @@ const activeRole = ref<PersonRole | null>(null);
             </div>
 
             <div v-if="activeRole == PersonRole.DubbingActor"
-                 class="w-[300px] shrink-0 overflow-auto h-[calc(100dvh-300px)]">
+                 class="w-75 shrink-0 overflow-auto h-[calc(100dvh-300px)]">
                 <div class="flex flex-col gap-5">
                     <div v-for="person in (people?.data ?? []).filter(_person => _person.role == PersonRole.Actor)"
                          class="flex gap-2.5 items-center leading-5">

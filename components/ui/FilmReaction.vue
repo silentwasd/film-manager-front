@@ -28,7 +28,7 @@ async function update(to: number) {
 <template>
     <div class="flex gap-2.5">
         <UTooltip text="Понравилось">
-            <UButton :color="reaction == 1 ? 'green' : 'gray'"
+            <UButton :color="reaction == 1 ? 'success' : 'neutral'"
                      :icon="reaction == 1 ? 'i-heroicons-hand-thumb-up-16-solid' : 'i-heroicons-hand-thumb-up'"
                      square
                      :loading="updating"
@@ -36,7 +36,7 @@ async function update(to: number) {
         </UTooltip>
 
         <UTooltip text="Трудно сказать">
-            <UButton :color="reaction == 0 ? 'cyan' : 'gray'"
+            <UButton :color="reaction == 0 ? 'info' : 'neutral'"
                      icon="i-heroicons-slash-16-solid"
                      square
                      :loading="updating"
@@ -44,7 +44,7 @@ async function update(to: number) {
         </UTooltip>
 
         <UTooltip text="Не понравилось">
-            <UButton :color="reaction == -1 ? 'red' : 'gray'"
+            <UButton :color="reaction == -1 ? 'error' : 'neutral'"
                      :icon="reaction == -1 ? 'i-heroicons-hand-thumb-down-16-solid' : 'i-heroicons-hand-thumb-down'"
                      square
                      :loading="updating"

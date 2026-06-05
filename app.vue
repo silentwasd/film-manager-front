@@ -1,18 +1,11 @@
-<script setup lang="ts">
-const config = useRuntimeConfig();
-</script>
-
 <template>
-    <NuxtLoadingIndicator/>
-    <UNotifications/>
+    <UApp>
+        <NuxtLoadingIndicator/>
 
-    <NuxtLayout>
-        <NuxtPage/>
-    </NuxtLayout>
-
-    <ClientOnly>
-        <MetricYandex v-if="config.public.metrics"/>
-    </ClientOnly>
+        <NuxtLayout>
+            <NuxtPage/>
+        </NuxtLayout>
+    </UApp>
 </template>
 
 <style scoped>

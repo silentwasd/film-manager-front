@@ -42,11 +42,11 @@ onMounted(() => {
 <template>
     <UMain>
         <UContainer v-if="film" class="flex flex-col h-full">
-            <div class="sticky top-16 z-10 bg-gray-900 pt-5">
+            <div class="sticky top-16 z-10 bg-white dark:bg-neutral-900 pt-5">
                 <div class="flex items-center gap-5">
                     <div class="shrink-0">
                         <UTooltip text="Вернуться в каталог">
-                            <UButton color="gray"
+                            <UButton color="neutral"
                                      icon="i-heroicons-chevron-left"
                                      variant="link"
                                      :padded="false"
@@ -61,7 +61,7 @@ onMounted(() => {
                     </div>
 
                     <UButton v-if="save"
-                             color="gray"
+                             color="neutral"
                              label="Сохранить"
                              icon="i-heroicons-check"
                              size="lg"
@@ -70,9 +70,9 @@ onMounted(() => {
                              @click="save"/>
                 </div>
 
-                <UHorizontalNavigation :links="nav"/>
+                <UNavigationMenu :items="nav"/>
 
-                <UDivider/>
+                <USeparator/>
             </div>
 
             <NuxtPage :film="film.data ?? []"

@@ -4,9 +4,9 @@ const perPage = defineModel<number>();
 
 <template>
     <USelectMenu class="w-full md:w-auto"
-                 :options="[5, 10, 15, 25, 30]"
+                 :items="[5, 10, 15, 25, 30]"
                  v-model="perPage">
-        <template #label>
+        <template #default>
             Показать {{ perPage }} записей
         </template>
     </USelectMenu>

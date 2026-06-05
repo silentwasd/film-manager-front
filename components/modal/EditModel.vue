@@ -7,7 +7,7 @@ const props = defineProps<{
 const form  = ref();
 const model = defineModel<any>();
 
-const state = ref<any>();
+const state = ref<any>({});
 
 watch(model, () => {
     if (!model.value)
@@ -17,6 +17,14 @@ watch(model, () => {
 });
 
 const saving = ref<boolean>(false);
+
+const open = computed({
+    get: () => !!model.value,
+    set: (value: boolean) => {
+        if (!value)
+            close();
+    }
+});
 
 async function save() {
     if (props.readonly)
@@ -51,42 +59,38 @@ function close() {
 </script>
 
 <template>
-    <UModal :model-value="!!model" @update:model-value="close">
-        <UForm ref="form" :state="state" @submit="save">
-            <UCard :ui="{ring: '', body: {padding: 'p-5 sm:p-5'}}">
-                <template #header>
-                    <div class="flex flex-row">
-                        <h3 class="font-semibold text-lg basis-full">
-                            <slot v-if="state.id > 0" name="edit-title" :state="state">Модель #{{ state.id }}</slot>
-                            <slot v-else name="create-title">Новая модель</slot>
-                        </h3>
+    <UModal v-model:open="open" :dismissible="!saving">
+        <template #content>
+            <UForm ref="form" :state="state" @submit="save">
+                <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+                    <h3 class="font-semibold text-lg basis-full">
+                        <slot v-if="state.id > 0" name="edit-title" :state="state">Модель #{{ state.id }}</slot>
+                        <slot v-else name="create-title">Новая модель</slot>
+                    </h3>
 
-                        <UButton icon="i-heroicons-x-mark" color="gray" variant="link"
-                                 square size="xl" :padded="false" @click="close"/>
-                    </div>
-                </template>
+                    <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
+                             square size="xl" @click="close"/>
+                </div>
 
-                <div class="flex flex-col gap-2.5">
+                <div class="flex flex-col gap-2.5 p-5">
                     <slot name="default" :state="state"/>
                 </div>
 
-                <template #footer>
-                    <div class="flex items-center justify-end gap-2.5">
-                        <UButton type="submit" :loading="saving" :disabled="readonly"
-                                 class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200">
-                            Сохранить
-                        </UButton>
+                <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-gray-700">
+                    <UButton type="submit" :loading="saving" :disabled="readonly"
+                             class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200">
+                        Сохранить
+                    </UButton>
 
-                        <slot name="footer" :state="state"/>
+                    <slot name="footer" :state="state"/>
 
-                        <UButton color="gray"
-                                 :disabled="saving" @click="close">
-                            Отменить
-                        </UButton>
-                    </div>
-                </template>
-            </UCard>
-        </UForm>
+                    <UButton color="neutral"
+                             :disabled="saving" @click="close">
+                        Отменить
+                    </UButton>
+                </div>
+            </UForm>
+        </template>
     </UModal>
 </template>
 

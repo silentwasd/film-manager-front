@@ -4,13 +4,9 @@ export default defineNuxtConfig({
 
     devtools: {enabled: true},
 
-    extends: ["@nuxt/ui-pro"],
+    modules: ["@nuxt/ui-pro", '@nuxtjs/google-fonts', '@vueuse/nuxt'],
 
-    modules: ["@nuxt/ui", '@nuxtjs/google-fonts', '@vueuse/nuxt', 'nuxt-time'],
-
-    colorMode: {
-        preference: 'dark'
-    },
+    css: ['~/assets/css/main.css'],
 
     runtimeConfig: {
         public: {

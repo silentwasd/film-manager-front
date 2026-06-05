@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <UMain style="height: calc(100vh - var(--header-height));">
+    <UMain class="h-[calc(100vh-var(--ui-header-height))]">
         <UContainer class="flex flex-col py-2.5 h-full">
             <slot/>
         </UContainer>

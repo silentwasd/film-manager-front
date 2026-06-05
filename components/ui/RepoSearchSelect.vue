@@ -22,9 +22,14 @@ const model = defineModel<string | number | boolean | Record<string, any> | unkn
 
 const loading = ref<boolean>(false);
 
+const items = ref<any[]>([]);
+
+const searchTerm = ref<string>('');
+const searchTermDebounced = refDebounced(searchTerm, 200);
+
 async function search(query: string) {
     if (props.disabled)
-        return [];
+        return;
 
     loading.value = true;
 
@@ -34,34 +39,40 @@ async function search(query: string) {
 
     loading.value = false;
 
-    return formats.data;
+    // Nuxt UI v3 не поддерживает by="id": модель хранит объекты, а сравнение идёт по ссылке.
+    // Переиспользуем ссылки уже выбранных значений для совпадающих id, чтобы выбор сравнивался по id.
+    const selected = Array.isArray(model.value) ? model.value : (model.value ? [model.value] : []);
+
+    items.value = formats.data.map((item: any) =>
+        selected.find((value: any) => value && typeof value === 'object' && value.id === item.id) ?? item
+    );
 }
+
+watch(searchTermDebounced, query => search(query));
+
+onMounted(() => search(''));
 </script>
 
 <template>
     <USelectMenu v-model="model"
+                 v-model:search-term="searchTerm"
+                 :items="items"
                  :loading="loading"
-                 :searchable="search"
-                 :searchable-placeholder="searchablePlaceholder ?? 'Поиск...'"
-                 option-attribute="name"
-                 trailing
+                 :search-input="{ placeholder: searchablePlaceholder ?? 'Поиск...' }"
+                 label-key="name"
                  :disabled="disabled"
-                 :key="key"
-                 by="id">
-        <template #option="{option}">
-            <slot :option="option"></slot>
+                 :key="key">
+        <template v-if="$slots.default" #item="{ item }">
+            <slot :option="item"></slot>
         </template>
 
-        <template #label>
-            <slot name="label"></slot>
+        <template v-if="$slots.label" #default="{ modelValue, open }">
+            <slot name="label" :model-value="modelValue" :open="open"></slot>
         </template>
 
-        <template #empty>
-            Ничего не найдено
-        </template>
-
-        <template #option-empty="{query}">
-            По запросу "{{ query }}" ничего не найдено.
+        <template #empty="{ searchTerm }">
+            <template v-if="searchTerm">По запросу "{{ searchTerm }}" ничего не найдено.</template>
+            <template v-else>Ничего не найдено</template>
         </template>
     </USelectMenu>
 </template>

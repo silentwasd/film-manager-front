@@ -70,7 +70,7 @@ async function create() {
             </td>
 
             <td class="w-1/3">
-                <USelectMenu :options="Object.values(PersonRole)"
+                <USelectMenu :items="Object.values(PersonRole)"
                              placeholder="Выберите роль из списка"
                              v-model="newRecord.role">
                     <template #option="{option}">
@@ -90,7 +90,7 @@ async function create() {
 
             <td>
                 <UButton icon="i-heroicons-plus"
-                         color="gray"
+                         color="neutral"
                          :loading="status == 'pending'"
                          @click="create"/>
             </td>

@@ -18,7 +18,7 @@ defineEmits<{
                 <div class="flex flex-row">
                     <h3 class="font-semibold text-lg basis-full">Подтвердите действие</h3>
 
-                    <UButton icon="i-heroicons-x-mark" color="gray" variant="link"
+                    <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
                              square size="xl" :padded="false" @click="$emit('cancel')"/>
                 </div>
             </template>
@@ -29,13 +29,13 @@ defineEmits<{
 
             <template #footer>
                 <div class="flex items-center justify-end">
-                    <UButton color="red" class="dark:bg-red-400 dark:hover:bg-red-300"
+                    <UButton color="error" class="dark:bg-error-400 dark:hover:bg-error-300"
                              type="submit"
                              :loading="removing"
                              @click="$emit('confirm')">
                         Подтвердить
                     </UButton>
-                    <UButton color="gray" class="ms-2.5"
+                    <UButton color="neutral" class="ms-2.5"
                              :disabled="removing"
                              @click="$emit('cancel')">Отменить</UButton>
                 </div>

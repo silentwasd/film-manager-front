@@ -2,14 +2,14 @@
 import {FilmFormat} from "~/types/enums/FilmFormat";
 
 const filmFormatOptions = [
-    {label: 'Любой', value: undefined},
-    ...Object.keys(FilmFormat).map(key => ({label: filmFormat(FilmFormat[key]), value: FilmFormat[key]}))
+    {label: 'Любой', id: undefined},
+    ...Object.values(FilmFormat).map(value => ({label: filmFormat(value), id: value}))
 ];
 </script>
 
 <template>
-    <USelectMenu :options="filmFormatOptions"
-                 value-attribute="value"/>
+    <USelectMenu :items="filmFormatOptions"
+                 value-key="id"/>
 </template>
 
 <style scoped>

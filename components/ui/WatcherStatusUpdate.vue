@@ -8,10 +8,10 @@ const props = defineProps<{
 }>();
 
 const watchStatusOptions = [
-    {label: 'Можно посмотреть', value: FilmWatchStatus.ToWatch},
-    {label: 'Нужно досмотреть', value: FilmWatchStatus.MustFinish},
-    {label: 'Просмотрено', value: FilmWatchStatus.Watched},
-    {label: 'Пропущено', value: FilmWatchStatus.Dropped},
+    {label: 'Можно посмотреть', id: FilmWatchStatus.ToWatch},
+    {label: 'Нужно досмотреть', id: FilmWatchStatus.MustFinish},
+    {label: 'Просмотрено', id: FilmWatchStatus.Watched},
+    {label: 'Пропущено', id: FilmWatchStatus.Dropped},
 ];
 
 const updating        = ref<boolean>(false);
@@ -27,7 +27,7 @@ async function update() {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         updating.value = false;
@@ -36,11 +36,12 @@ async function update() {
 </script>
 
 <template>
-    <USelectMenu :options="watchStatusOptions"
-                 value-attribute="value"
+    <USelectMenu :items="watchStatusOptions"
                  :loading="updating"
                  :disabled="updating"
                  v-model="watcher.status"
+                 value-key="id"
+                 class="w-full"
                  @update:model-value="update"/>
 </template>
 

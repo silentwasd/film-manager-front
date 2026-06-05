@@ -56,7 +56,7 @@ async function submit() {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         loading.value = false;
@@ -68,41 +68,45 @@ async function submit() {
     <UMain>
         <UContainer class="flex justify-center pt-5 lg:pt-10">
             <UForm ref="form" :state="state" @submit="submit">
-                <div class="flex flex-col gap-5 border dark:border-gray-800 p-5 rounded-md shadow-xl w-[300px]">
-                    <UFormGroup label="Имя" name="name">
+                <div class="flex flex-col gap-5 border dark:border-neutral-800 p-5 rounded-md shadow-xl w-[300px]">
+                    <UFormField label="Имя" name="name">
                         <UInput leading-icon="i-heroicons-user"
                                 placeholder="Иван"
                                 size="lg"
                                 autocomplete="one-time-code"
+                                class="w-full"
                                 v-model="state.name"/>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="E-mail" name="email">
+                    <UFormField label="E-mail" name="email">
                         <UInput type="email"
                                 leading-icon="i-heroicons-at-symbol"
                                 placeholder="example@example.com"
                                 size="lg"
                                 autocomplete="one-time-code"
+                                class="w-full"
                                 v-model="state.email"/>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="Пароль" name="password">
+                    <UFormField label="Пароль" name="password">
                         <UInput type="password"
                                 leading-icon="i-heroicons-key"
                                 placeholder="••••••••"
                                 size="lg"
                                 autocomplete="one-time-code"
+                                class="w-full"
                                 v-model="state.password"/>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="Повторите пароль" name="password_confirmation">
+                    <UFormField label="Повторите пароль" name="password_confirmation">
                         <UInput type="password"
                                 leading-icon="i-heroicons-key"
                                 placeholder="••••••••"
                                 size="lg"
                                 autocomplete="one-time-code"
+                                class="w-full"
                                 v-model="state.password_confirmation"/>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="flex flex-col gap-2.5">
                         <UButton label="Продолжить"
@@ -114,7 +118,7 @@ async function submit() {
                         <UButton label="Уже есть аккаунт"
                                  type="submit"
                                  size="lg"
-                                 color="gray"
+                                 color="neutral"
                                  class="w-full"
                                  to="/login"/>
                     </div>

@@ -116,7 +116,7 @@ async function remove(watcher: FilmWatcher) {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         removing.value[watcher.id] = false;
@@ -147,16 +147,18 @@ async function remove(watcher: FilmWatcher) {
                 <UiRepoSearchSelectId :repo="new PersonRepository()"
                                       placeholder="Фильтр по личностям"
                                       multiple
-                                      class="w-[250px]"
+                                      class="w-62.5"
                                       v-model="people">
                     <template #default="{option}">
                         <div class="flex items-center gap-2">
                             <img :src="option.photo ? fileUrl(option.photo) : '/img/person.jpg'"
-                                 class="w-10 h-10 object-cover rounded shrink-0"/>
+                                 class="w-10 h-10 object-cover rounded shrink-0"
+                                 :alt="option.name"/>
 
                             <div class="grow">
                                 <p class="font-medium leading-4">{{ option.name }}</p>
-                                <p class="text-xs">{{ option.roles.map(role => personRole(role)).join(', ') }}</p>
+                                <p class="text-xs">
+                                    {{ option.roles.map((role: PersonRole) => personRole(role)).join(', ') }}</p>
                             </div>
                         </div>
                     </template>
@@ -219,7 +221,7 @@ async function remove(watcher: FilmWatcher) {
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip text="Перейти">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-arrow-right"
                                  square
                                  :to="`/catalog/films/${row.film.id}`"/>
@@ -228,7 +230,7 @@ async function remove(watcher: FilmWatcher) {
                     <UiFilmReaction :key="row.id" :film-id="row.film.id" :init-reaction="row.reaction"/>
 
                     <UTooltip text="Удалить">
-                        <UButton color="gray"
+                        <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>

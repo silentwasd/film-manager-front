@@ -10,7 +10,6 @@ import type TagResource from "~/resources/management/TagResource";
 import type CompanyResource from "~/resources/management/CompanyResource";
 import type Film from "~/resources/Film";
 import FilmRepository from "~/repos/FilmRepository";
-import {UserRole} from "~/types/enums/UserRole";
 
 const props = defineProps<{
     film: Film,
@@ -55,7 +54,7 @@ save.value = async () => {
         toast.add({
             title      : 'Успех',
             description: 'Фильм успешно сохранен.',
-            color      : 'green'
+            color      : 'success'
         });
     } catch (err: any) {
         if (err.statusCode === 422) {
@@ -70,7 +69,7 @@ save.value = async () => {
         toast.add({
             title      : 'Ошибка',
             description: err?.data?.message || err?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         saving.value = false;
@@ -82,7 +81,7 @@ save.value = async () => {
     <div class="flex gap-5 py-5">
         <div class="sticky top-48 h-full">
             <div
-                class="relative flex items-center justify-center w-[250px] h-[375px] border border-gray-700 rounded-lg overflow-clip bg-cover bg-center cursor-pointer"
+                class="relative flex items-center justify-center w-[250px] h-[375px] border border-neutral-700 rounded-lg overflow-clip bg-cover bg-center cursor-pointer"
                 :style="`background-image: url(${fileUrl(state.cover as string)});`"
                 @click="fileRef.click()">
                 <input ref="fileRef"
@@ -96,13 +95,13 @@ save.value = async () => {
                 <img v-if="state.cover"
                      :src="cover"
                      :alt="state.name"
-                     class="max-w-[250px] max-h-[375px] z-10"/>
+                     class="max-w-62.5 max-h-93.75 z-10"/>
 
                 <UIcon v-else name="i-heroicons-film" class="text-8xl"/>
             </div>
 
             <UButton
-                color="gray"
+                color="neutral"
                 label="Просмотр"
                 icon="i-heroicons-eye-solid"
                 class="w-full mt-2.5"
@@ -115,53 +114,60 @@ save.value = async () => {
                @submit="() => save ? save() : undefined">
             <input type="submit" class="hidden"/>
 
-            <UFormGroup label="Наименование" name="name" required>
-                <UInput v-model="state.name"/>
-            </UFormGroup>
+            <UFormField label="Наименование" name="name" required>
+                <UInput v-model="state.name"
+                        class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Оригинальное наименование" name="original_name">
+            <UFormField label="Оригинальное наименование" name="original_name">
                 <UInput :model-value="state.original_name ?? ''"
                         @update:model-value="state.original_name = $event"
-                        placeholder="The Jack Who Built The House"/>
-            </UFormGroup>
+                        placeholder="The Jack Who Built The House"
+                        class="w-full"/>
+            </UFormField>
 
-            <UFormGroup label="Фоновая обложка" name="background_cover">
+            <UFormField label="Фоновая обложка" name="background_cover">
                 <UInput type="file"
                         accept="image/*"
+                        class="w-full"
                         @input="state.background_cover = $event.target.files[0]"/>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Формат" name="format" required>
+            <UFormField label="Формат" name="format" required>
                 <USelectMenu v-model="state.format"
-                             :options="Object.values(FilmFormat)">
-                    <template #option="{option}">
-                        {{ filmFormat(option) }}
+                             class="w-full"
+                             :items="Object.values(FilmFormat)">
+                    <template #item-label="{item}">
+                        {{ filmFormat(item) }}
                     </template>
 
-                    <template #label>
+                    <template #default>
                         {{ filmFormat(state.format) }}
                     </template>
                 </USelectMenu>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Год производства" name="produced_year">
+            <UFormField label="Год производства" name="produced_year">
                 <UInput type="number"
+                        class="w-full"
                         :min="0"
                         v-model="state.produced_year"/>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Дата премьеры" name="release_date">
+            <UFormField label="Дата премьеры" name="release_date">
                 <UInput type="date"
+                        class="w-full"
                         :model-value="state.release_date ? undater(state.release_date) : undefined"
                         @update:model-value="state.release_date = dater($event)"/>
 
                 <template v-if="state.release_date" #hint>
                     <NuxtTime :datetime="undater(state.release_date)" date-style="medium"/>
                 </template>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Жанры" name="genres">
+            <UFormField label="Жанры" name="genres">
                 <UiRepoSearchSelect :repo="new GenreRepository()"
+                                    class="w-full"
                                     placeholder="Выберите жанры из списка"
                                     multiple
                                     v-model="state.genres">
@@ -171,10 +177,11 @@ save.value = async () => {
                         }}
                     </template>
                 </UiRepoSearchSelect>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Страны" name="countries">
+            <UFormField label="Страны" name="countries">
                 <UiRepoSearchSelect :repo="new CountryRepository()"
+                                    class="w-full"
                                     placeholder="Выберите страны из списка"
                                     multiple
                                     v-model="state.countries">
@@ -184,10 +191,11 @@ save.value = async () => {
                         }}
                     </template>
                 </UiRepoSearchSelect>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Теги" name="tags">
+            <UFormField label="Теги" name="tags">
                 <UiRepoSearchSelect :repo="new TagRepository()"
+                                    class="w-full"
                                     placeholder="Выберите теги из списка"
                                     multiple
                                     v-model="state.tags">
@@ -197,10 +205,11 @@ save.value = async () => {
                         }}
                     </template>
                 </UiRepoSearchSelect>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Компании" name="companies">
+            <UFormField label="Компании" name="companies">
                 <UiRepoSearchSelect :repo="new CompanyRepository()"
+                                    class="w-full"
                                     placeholder="Выберите компании из списка"
                                     multiple
                                     v-model="state.companies">
@@ -210,15 +219,16 @@ save.value = async () => {
                         }}
                     </template>
                 </UiRepoSearchSelect>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup :label="'Описание (' + (state.description?.length ?? 0) + ' / 65535)'"
+            <UFormField :label="'Описание (' + (state.description?.length ?? 0) + ' / 65535)'"
                         name="description">
                 <UTextarea
                     :model-value="state.description ? state.description.replaceAll('\r', '') : undefined"
                     @update:model-value="state.description = $event"
-                    :rows="10"/>
-            </UFormGroup>
+                    :rows="10"
+                    class="w-full"/>
+            </UFormField>
         </UForm>
     </div>
 </template>

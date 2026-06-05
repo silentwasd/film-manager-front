@@ -46,7 +46,7 @@ async function submit() {
         toast.add({
             title      : 'Ошибка',
             description: e?.data?.message || e?.message,
-            color      : 'red'
+            color      : 'error'
         });
     } finally {
         loading.value = false;
@@ -58,22 +58,24 @@ async function submit() {
     <UMain>
         <UContainer class="flex justify-center pt-5 lg:pt-10">
             <UForm :state="state" @submit="submit">
-                <div class="flex flex-col gap-5 border dark:border-gray-800 p-5 rounded-md shadow-xl w-[300px]">
-                    <UFormGroup label="E-mail">
+                <div class="flex flex-col gap-5 border dark:border-neutral-800 p-5 rounded-md shadow-xl w-75">
+                    <UFormField label="E-mail">
                         <UInput type="email"
                                 leading-icon="i-heroicons-at-symbol"
                                 placeholder="example@example.com"
                                 size="lg"
+                                class="w-full"
                                 v-model="state.email"/>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="Пароль">
+                    <UFormField label="Пароль">
                         <UInput type="password"
                                 leading-icon="i-heroicons-key"
                                 placeholder="••••••••"
                                 size="lg"
+                                class="w-full"
                                 v-model="state.password"/>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="flex flex-col gap-2.5">
                         <UButton label="Продолжить"
@@ -85,7 +87,7 @@ async function submit() {
                         <UButton label="Зарегистрироваться"
                                  type="submit"
                                  size="lg"
-                                 color="gray"
+                                 color="neutral"
                                  class="w-full"
                                  to="/register"/>
                     </div>

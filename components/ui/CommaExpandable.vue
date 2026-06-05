@@ -14,12 +14,12 @@ const expanded = ref<boolean>(false);
         </template>
 
         <a v-if="!expanded && items.length > 3"
-           class="text-gray-500 hover:text-gray-400 ms-1.5"
+           class="text-neutral-500 hover:text-neutral-400 ms-1.5"
            href="#"
            @click="expanded = true">еще {{ items.length - 3 }}</a>
 
         <a v-else-if="expanded && items.length > 3"
-           class="text-gray-500 hover:text-gray-400 ms-1.5"
+           class="text-neutral-500 hover:text-neutral-400 ms-1.5"
            href="#"
            @click="expanded = false">скрыть</a>
     </div>
