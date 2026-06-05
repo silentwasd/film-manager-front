@@ -112,14 +112,15 @@ async function submit() {
                         <UButton label="Продолжить"
                                  type="submit"
                                  size="lg"
-                                 class="w-full"
+                                 class="w-full justify-center"
                                  :loading="loading"/>
 
                         <UButton label="Уже есть аккаунт"
                                  type="submit"
                                  size="lg"
                                  color="neutral"
-                                 class="w-full"
+                                 variant="subtle"
+                                 class="w-full justify-center"
                                  to="/login"/>
                     </div>
                 </div>

@@ -83,20 +83,20 @@ async function submit() {
                         <UButton label="Продолжить"
                                  type="submit"
                                  size="lg"
-                                 class="w-full"
+                                 class="w-full justify-center"
                                  :loading="loading"/>
 
                         <UButton label="Зарегистрироваться"
                                  type="submit"
                                  size="lg"
                                  color="neutral"
-                                 class="w-full"
+                                 variant="subtle"
+                                 class="w-full justify-center"
                                  to="/register"/>
 
                         <USeparator label="или" class="my-0.5"/>
 
                         <UButton label="Войти через Kotonet"
-                                 icon="i-heroicons-globe-alt"
                                  size="lg"
                                  color="neutral"
                                  variant="subtle"
