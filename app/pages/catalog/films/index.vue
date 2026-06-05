@@ -332,6 +332,10 @@ const filmWatcherRepo = new FilmWatcherRepository();
                                  variant="subtle"/>
                     </UTooltip>
 
+                    <UTooltip text="В коллекцию">
+                        <UiAddToCollection :film-id="row.id" :icon-only="true"/>
+                    </UTooltip>
+
                     <UTooltip v-if="row.can_edit" text="Удалить">
                         <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"

@@ -230,6 +230,10 @@ async function remove(watcher: FilmWatcher) {
 
                     <UiFilmReaction :key="row.id" :film-id="row.film.id" :init-reaction="row.reaction"/>
 
+                    <UTooltip text="В коллекцию">
+                        <UiAddToCollection :film-id="row.film.id" :icon-only="true"/>
+                    </UTooltip>
+
                     <UTooltip text="Удалить">
                         <UButton color="neutral"
                                  variant="subtle"

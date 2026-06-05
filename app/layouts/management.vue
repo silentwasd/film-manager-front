@@ -32,6 +32,11 @@ const nav = computed(() => [{
     to     : '/catalog/my-films',
     visible: profile.value
 }, {
+    label  : 'Коллекции',
+    icon   : 'i-heroicons-rectangle-stack-20-solid',
+    to     : '/catalog/collections',
+    visible: profile.value
+}, {
     label   : 'Справочники',
     icon    : 'i-heroicons-inbox-stack-20-solid',
     children: [{

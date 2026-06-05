@@ -92,6 +92,8 @@ const {
                                  class="w-full"
                                  @click="backAfterLogin()"/>
 
+                        <UiAddToCollection v-if="profile" :film-id="filmData.id"/>
+
                         <UButton
                             v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"
                             color="neutral"
