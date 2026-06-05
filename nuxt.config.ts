@@ -8,6 +8,10 @@ export default defineNuxtConfig({
 
     css: ['~/assets/css/main.css'],
 
+    ui: {
+        fonts: false
+    },
+
     runtimeConfig: {
         public: {
             apiUrl     : process.env.NUXT_API_URL,
