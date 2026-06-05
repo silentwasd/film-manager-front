@@ -224,6 +224,7 @@ async function remove(watcher: FilmWatcher) {
                         <UButton color="neutral"
                                  icon="i-heroicons-arrow-right"
                                  square
+                                 variant="subtle"
                                  :to="`/catalog/films/${row.film.id}`"/>
                     </UTooltip>
 
@@ -231,6 +232,7 @@ async function remove(watcher: FilmWatcher) {
 
                     <UTooltip text="Удалить">
                         <UButton color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>

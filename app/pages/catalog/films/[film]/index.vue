@@ -86,6 +86,7 @@ const {
 
                         <UButton v-else
                                  color="neutral"
+                                 variant="subtle"
                                  label="В мои фильмы"
                                  icon="i-heroicons-plus"
                                  class="w-full"
@@ -94,6 +95,7 @@ const {
                         <UButton
                             v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"
                             color="neutral"
+                            variant="subtle"
                             label="Редактировать"
                             icon="i-heroicons-pencil-solid"
                             :to="`/catalog/films/${filmData.id}/edit`"/>

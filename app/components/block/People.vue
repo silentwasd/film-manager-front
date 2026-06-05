@@ -91,6 +91,7 @@ const activeRole = ref<PersonRole | null>(null);
         <div v-if="people.length > 6" class="flex justify-center mt-5">
             <UButton :label="details ? 'Скрыть' : 'Показать больше'"
                      color="neutral"
+                     variant="subtle"
                      size="xl"
                      @click="details = !details"/>
         </div>

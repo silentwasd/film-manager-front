@@ -148,6 +148,7 @@ async function remove() {
 
                         <UButton v-if="record.id == 0"
                                  color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-plus"
                                  :loading="creating"
                                  :disabled="creating || !record.person"
@@ -155,6 +156,7 @@ async function remove() {
 
                         <UButton v-else
                                  color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-trash-solid"
                                  :loading="updating || removing"
                                  @click="remove"/>

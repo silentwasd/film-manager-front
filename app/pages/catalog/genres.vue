@@ -116,6 +116,7 @@ async function save(state: any) {
             <template #actions>
                 <UButton icon="i-heroicons-plus"
                          color="neutral"
+                         variant="subtle"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -130,6 +131,7 @@ async function save(state: any) {
                 <div class="flex items-center justify-end gap-2.5">
                     <UTooltip text="Изменить">
                         <UButton color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-pencil-solid"
                                  square
                                  @click="editRow = row"/>
@@ -137,6 +139,7 @@ async function save(state: any) {
 
                     <UTooltip text="Удалить">
                         <UButton color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-trash-solid"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>

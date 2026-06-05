@@ -78,6 +78,7 @@ onMounted(async () => {
 
         <UButton v-else
                  color="neutral"
+                 variant="subtle"
                  label="В мои фильмы"
                  icon="i-heroicons-plus"
                  class="w-full"

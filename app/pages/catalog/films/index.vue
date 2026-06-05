@@ -235,6 +235,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
             <template #actions>
                 <UButton icon="i-heroicons-plus"
                          color="neutral"
+                         variant="subtle"
                          @click="editRow = makeResource()">
                     Создать
                 </UButton>
@@ -301,6 +302,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
                         <UButton color="neutral"
                                  icon="i-heroicons-arrow-right"
                                  square
+                                 variant="subtle"
                                  :to="`/catalog/films/${row.id}`"/>
                     </UTooltip>
 
@@ -308,6 +310,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
                         <UButton color="neutral"
                                  icon="i-heroicons-pencil-solid"
                                  square
+                                 variant="subtle"
                                  :to="`/catalog/films/${row.id}/edit`"/>
                     </UTooltip>
 
@@ -316,6 +319,7 @@ const filmWatcherRepo = new FilmWatcherRepository();
                         <UButton color="neutral"
                                  icon="i-heroicons-plus"
                                  square
+                                 variant="subtle"
                                  @click="addRow = row"/>
                     </UTooltip>
 
@@ -324,13 +328,15 @@ const filmWatcherRepo = new FilmWatcherRepository();
                         <UButton color="neutral"
                                  disabled
                                  icon="i-heroicons-check-circle-16-solid"
-                                 square/>
+                                 square
+                                 variant="subtle"/>
                     </UTooltip>
 
                     <UTooltip v-if="row.can_edit" text="Удалить">
                         <UButton color="neutral"
                                  icon="i-heroicons-trash-solid"
                                  square
+                                 variant="subtle"
                                  @click="removeRow = row"/>
                     </UTooltip>
                 </div>

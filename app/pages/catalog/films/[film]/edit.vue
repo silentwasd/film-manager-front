@@ -61,7 +61,7 @@ onMounted(() => {
                     </div>
 
                     <UButton v-if="save"
-                             color="neutral"
+                             color="success"
                              label="Сохранить"
                              icon="i-heroicons-check"
                              size="lg"

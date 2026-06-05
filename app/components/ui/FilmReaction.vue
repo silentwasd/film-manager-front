@@ -31,6 +31,7 @@ async function update(to: number) {
             <UButton :color="reaction == 1 ? 'success' : 'neutral'"
                      :icon="reaction == 1 ? 'i-heroicons-hand-thumb-up-16-solid' : 'i-heroicons-hand-thumb-up'"
                      square
+                     variant="subtle"
                      :loading="updating"
                      @click="update(1)"/>
         </UTooltip>
@@ -39,6 +40,7 @@ async function update(to: number) {
             <UButton :color="reaction == 0 ? 'info' : 'neutral'"
                      icon="i-heroicons-slash-16-solid"
                      square
+                     variant="subtle"
                      :loading="updating"
                      @click="update(0)"/>
         </UTooltip>
@@ -47,6 +49,7 @@ async function update(to: number) {
             <UButton :color="reaction == -1 ? 'error' : 'neutral'"
                      :icon="reaction == -1 ? 'i-heroicons-hand-thumb-down-16-solid' : 'i-heroicons-hand-thumb-down'"
                      square
+                     variant="subtle"
                      :loading="updating"
                      @click="update(-1)"/>
         </UTooltip>

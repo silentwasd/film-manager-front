@@ -71,6 +71,7 @@ watch(add, value => {
                     <div class="flex gap-2.5">
                         <UButton label="Опубликовать"
                                  color="neutral"
+                                 variant="subtle"
                                  icon="i-heroicons-paper-airplane-16-solid"
                                  :loading="publishing"
                                  :disabled="text.length > 512"
@@ -78,6 +79,7 @@ watch(add, value => {
 
                         <UTooltip text="Закрыть">
                             <UButton color="neutral"
+                                     variant="subtle"
                                      icon="i-heroicons-x-mark-16-solid"
                                      @click="add = false"/>
                         </UTooltip>
@@ -114,6 +116,7 @@ watch(add, value => {
             <UButton v-else
                      label="Оставить отзыв"
                      color="neutral"
+                     variant="subtle"
                      icon="i-heroicons-pencil-square-solid"
                      :disabled="!!items.find(item => item.user?.id == profile?.id)"
                      @click="updateId = undefined; add = true"/>
@@ -122,6 +125,7 @@ watch(add, value => {
         <div v-else>
             <UButton label="Оставить отзыв"
                      color="neutral"
+                     variant="subtle"
                      icon="i-heroicons-pencil-square-solid"
                      @click="backAfterLogin()"/>
         </div>

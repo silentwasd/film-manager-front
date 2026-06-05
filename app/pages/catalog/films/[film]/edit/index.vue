@@ -102,6 +102,7 @@ save.value = async () => {
 
             <UButton
                 color="neutral"
+                variant="subtle"
                 label="Просмотр"
                 icon="i-heroicons-eye-solid"
                 class="w-full mt-2.5"
