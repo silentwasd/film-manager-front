@@ -36,12 +36,13 @@ const {data: collections, status, refresh} = await repo.lazyList<PaginatedCollec
 const columns = [
     {key: 'id', label: '#', sortable: true},
     {key: 'name', label: 'Название', sortable: true},
+    {key: 'is_public', label: 'Доступ'},
     {key: 'films_count', label: 'Фильмов'},
     {key: 'actions'},
 ];
 
 function makeCollection(): Collection {
-    return {id: 0, name: ''};
+    return {id: 0, name: '', description: '', is_public: false};
 }
 
 const editRow  = ref<Collection>();
@@ -55,6 +56,49 @@ async function save(state: Collection) {
         await repo.store(state);
     }
     await refresh();
+}
+
+// --- Публикация ---
+const publishing = ref<{ [key: number]: boolean }>({});
+
+async function togglePublic(collection: Collection) {
+    publishing.value[collection.id] = true;
+
+    const next = !collection.is_public;
+
+    try {
+        await repo.update({...collection, is_public: next});
+        await refresh();
+
+        toast.add({
+            title: next ? 'Коллекция опубликована' : 'Коллекция снята с публикации'
+        });
+    } catch (err: any) {
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err.message,
+            color      : 'error'
+        });
+    } finally {
+        publishing.value[collection.id] = false;
+    }
+}
+
+async function copyLink(collection: Collection) {
+    if (!collection.public_url) {
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(collection.public_url);
+        toast.add({title: 'Ссылка скопирована'});
+    } catch {
+        toast.add({
+            title      : 'Не удалось скопировать',
+            description: collection.public_url,
+            color      : 'error'
+        });
+    }
 }
 
 async function remove(collection: Collection) {
@@ -107,8 +151,33 @@ async function remove(collection: Collection) {
                 </NuxtLink>
             </template>
 
+            <template #is_public-data="{row}">
+                <UBadge :color="row.is_public ? 'primary' : 'neutral'"
+                        variant="subtle"
+                        :icon="row.is_public ? 'i-heroicons-globe-alt-20-solid' : 'i-heroicons-lock-closed-20-solid'">
+                    {{ row.is_public ? 'Публичная' : 'Приватная' }}
+                </UBadge>
+            </template>
+
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
+                    <UTooltip v-if="row.is_public" text="Скопировать публичную ссылку">
+                        <UButton color="neutral"
+                                 variant="subtle"
+                                 icon="i-heroicons-link-20-solid"
+                                 square
+                                 @click="copyLink(row)"/>
+                    </UTooltip>
+
+                    <UTooltip :text="row.is_public ? 'Снять с публикации' : 'Опубликовать'">
+                        <UButton color="neutral"
+                                 variant="subtle"
+                                 :icon="row.is_public ? 'i-heroicons-eye-slash-20-solid' : 'i-heroicons-globe-alt-20-solid'"
+                                 square
+                                 :loading="publishing[row.id] ?? false"
+                                 @click="togglePublic(row)"/>
+                    </UTooltip>
+
                     <UTooltip text="Открыть">
                         <UButton color="neutral"
                                  variant="subtle"
@@ -139,7 +208,7 @@ async function remove(collection: Collection) {
 
     <ModalEditModel v-model="editRow" :save="save">
         <template #create-title>Новая коллекция</template>
-        <template #edit-title="{state}">Переименовать коллекцию</template>
+        <template #edit-title="{state}">Коллекция «{{ state.name }}»</template>
 
         <template #default="{state}">
             <UFormField label="Название" name="name" required>
@@ -147,6 +216,21 @@ async function remove(collection: Collection) {
                         placeholder="Лучшие боевики всех времён"
                         class="w-full"
                         :maxlength="255"/>
+            </UFormField>
+
+            <UFormField label="Описание" name="description"
+                        help="Показывается в шапке публичной страницы и в превью ссылки.">
+                <UTextarea v-model="state.description"
+                           placeholder="Подборка на вечер, от самого динамичного к самому спокойному."
+                           class="w-full"
+                           :rows="3"
+                           :maxlength="2000"/>
+            </UFormField>
+
+            <UFormField name="is_public">
+                <USwitch v-model="state.is_public"
+                         label="Публичная коллекция"
+                         description="Страница станет доступна всем по прямой ссылке и попадёт в sitemap."/>
             </UFormField>
         </template>
     </ModalEditModel>

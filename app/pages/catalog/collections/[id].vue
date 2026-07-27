@@ -173,6 +173,66 @@ function discardOrder() {
     localFilms.value = [...serverFilms.value];
 }
 
+// --- Публикация ---
+const publishing = ref(false);
+
+async function togglePublic() {
+    if (!collection.value) {
+        return;
+    }
+
+    publishing.value = true;
+
+    const next = !collection.value.is_public;
+
+    try {
+        const result = await repo.update<Resource<Collection>>({
+            id         : collection.value.id,
+            name       : collection.value.name,
+            description: collection.value.description,
+            is_public  : next
+        });
+
+        // Точечно обновляем кэш useAsyncData, чтобы не перезагружать список
+        // фильмов и не потерять несохранённый порядок.
+        if (collectionData.value) {
+            collectionData.value = {
+                ...collectionData.value,
+                data: {...collectionData.value.data, ...result.data}
+            };
+        }
+
+        toast.add({
+            title: next ? 'Коллекция опубликована' : 'Коллекция снята с публикации'
+        });
+    } catch (err: any) {
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err.message,
+            color      : 'error'
+        });
+    } finally {
+        publishing.value = false;
+    }
+}
+
+async function copyLink() {
+    if (!collection.value?.public_url) {
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(collection.value.public_url);
+        toast.add({title: 'Ссылка скопирована'});
+    } catch {
+        toast.add({
+            title      : 'Не удалось скопировать',
+            description: collection.value.public_url,
+            color      : 'error'
+        });
+    }
+}
+
 // --- Защита от потери порядка ---
 useEventListener('beforeunload', (e: BeforeUnloadEvent) => {
     if (isDirty.value) {
@@ -198,15 +258,70 @@ onBeforeRouteLeave(() => {
                               to="/catalog/collections">
                         ← Мои коллекции
                     </NuxtLink>
-                    <h1 class="text-2xl font-bold mt-0.5">{{ collection?.name }}</h1>
+
+                    <div class="flex items-center gap-2.5 mt-0.5">
+                        <h1 class="text-2xl font-bold">{{ collection?.name }}</h1>
+
+                        <UBadge :color="collection?.is_public ? 'primary' : 'neutral'"
+                                variant="subtle"
+                                :icon="collection?.is_public ? 'i-heroicons-globe-alt-20-solid' : 'i-heroicons-lock-closed-20-solid'">
+                            {{ collection?.is_public ? 'Публичная' : 'Приватная' }}
+                        </UBadge>
+                    </div>
+
+                    <p v-if="collection?.description" class="text-sm text-neutral-400 mt-1 max-w-xl">
+                        {{ collection.description }}
+                    </p>
                 </div>
 
-                <UButton icon="i-heroicons-plus"
-                         color="neutral"
-                         variant="subtle"
-                         @click="openAddFilm()">
-                    Добавить фильм
-                </UButton>
+                <div class="flex items-center gap-2.5">
+                    <UButton :icon="collection?.is_public ? 'i-heroicons-eye-slash-20-solid' : 'i-heroicons-globe-alt-20-solid'"
+                             color="neutral"
+                             variant="subtle"
+                             :loading="publishing"
+                             @click="togglePublic">
+                        {{ collection?.is_public ? 'Снять с публикации' : 'Опубликовать' }}
+                    </UButton>
+
+                    <UButton icon="i-heroicons-plus"
+                             color="neutral"
+                             variant="subtle"
+                             @click="openAddFilm()">
+                        Добавить фильм
+                    </UButton>
+                </div>
+            </div>
+
+            <!-- Публичная ссылка -->
+            <div v-if="collection?.is_public && collection.public_url"
+                 class="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-primary-500/10 border border-primary-500/30 shrink-0">
+                <div class="min-w-0">
+                    <p class="text-sm font-medium">Коллекция опубликована</p>
+
+                    <a :href="collection.public_url"
+                       target="_blank"
+                       class="text-sm text-neutral-500 dark:text-neutral-400 hover:underline underline-offset-2 truncate block">
+                        {{ collection.public_url }}
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <UButton size="sm"
+                             color="neutral"
+                             variant="subtle"
+                             icon="i-heroicons-link-20-solid"
+                             @click="copyLink">
+                        Скопировать
+                    </UButton>
+
+                    <UButton size="sm"
+                             color="neutral"
+                             variant="subtle"
+                             icon="i-heroicons-arrow-top-right-on-square-20-solid"
+                             :to="collection.public_url"
+                             target="_blank"
+                             square/>
+                </div>
             </div>
 
             <!-- Баннер несохранённых изменений -->
