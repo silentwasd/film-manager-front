@@ -6,6 +6,7 @@ import FilmRepository from "~/repos/FilmRepository";
 import type Collection from "~/resources/Collection";
 import type CollectionFilm from "~/resources/CollectionFilm";
 import type Film from "~/resources/Film";
+import {CollectionVisibility} from "~/types/enums/CollectionVisibility";
 import type Resource from "~/types/Resource";
 
 definePageMeta({
@@ -173,24 +174,33 @@ function discardOrder() {
     localFilms.value = [...serverFilms.value];
 }
 
-// --- Публикация ---
-const publishing = ref(false);
+// --- Уровень доступа ---
+const changing = ref(false);
 
-async function togglePublic() {
-    if (!collection.value) {
+const visibilityMenu = computed(() => [Object.values(CollectionVisibility).map(value => {
+    const meta = collectionVisibility(value);
+
+    return {
+        label   : meta.label,
+        icon    : meta.icon,
+        disabled: collection.value?.visibility === value,
+        onSelect: () => changeVisibility(value)
+    };
+})]);
+
+async function changeVisibility(visibility: CollectionVisibility) {
+    if (!collection.value || collection.value.visibility === visibility) {
         return;
     }
 
-    publishing.value = true;
-
-    const next = !collection.value.is_public;
+    changing.value = true;
 
     try {
         const result = await repo.update<Resource<Collection>>({
             id         : collection.value.id,
             name       : collection.value.name,
             description: collection.value.description,
-            is_public  : next
+            visibility
         });
 
         // Точечно обновляем кэш useAsyncData, чтобы не перезагружать список
@@ -202,9 +212,7 @@ async function togglePublic() {
             };
         }
 
-        toast.add({
-            title: next ? 'Коллекция опубликована' : 'Коллекция снята с публикации'
-        });
+        toast.add({title: `Доступ изменён: ${collectionVisibility(visibility).label.toLowerCase()}`});
     } catch (err: any) {
         toast.add({
             title      : 'Ошибка',
@@ -212,7 +220,7 @@ async function togglePublic() {
             color      : 'error'
         });
     } finally {
-        publishing.value = false;
+        changing.value = false;
     }
 }
 
@@ -262,11 +270,13 @@ onBeforeRouteLeave(() => {
                     <div class="flex items-center gap-2.5 mt-0.5">
                         <h1 class="text-2xl font-bold">{{ collection?.name }}</h1>
 
-                        <UBadge :color="collection?.is_public ? 'primary' : 'neutral'"
-                                variant="subtle"
-                                :icon="collection?.is_public ? 'i-heroicons-globe-alt-20-solid' : 'i-heroicons-lock-closed-20-solid'">
-                            {{ collection?.is_public ? 'Публичная' : 'Приватная' }}
-                        </UBadge>
+                        <UTooltip :text="collectionVisibility(collection?.visibility).hint">
+                            <UBadge :color="collectionVisibility(collection?.visibility).color"
+                                    variant="subtle"
+                                    :icon="collectionVisibility(collection?.visibility).icon">
+                                {{ collectionVisibility(collection?.visibility).label }}
+                            </UBadge>
+                        </UTooltip>
                     </div>
 
                     <p v-if="collection?.description" class="text-sm text-neutral-400 mt-1 max-w-xl">
@@ -275,13 +285,15 @@ onBeforeRouteLeave(() => {
                 </div>
 
                 <div class="flex items-center gap-2.5">
-                    <UButton :icon="collection?.is_public ? 'i-heroicons-eye-slash-20-solid' : 'i-heroicons-globe-alt-20-solid'"
-                             color="neutral"
-                             variant="subtle"
-                             :loading="publishing"
-                             @click="togglePublic">
-                        {{ collection?.is_public ? 'Снять с публикации' : 'Опубликовать' }}
-                    </UButton>
+                    <UDropdownMenu :items="visibilityMenu">
+                        <UButton :icon="collectionVisibility(collection?.visibility).icon"
+                                 color="neutral"
+                                 variant="subtle"
+                                 trailing-icon="i-heroicons-chevron-down-20-solid"
+                                 :loading="changing">
+                            Доступ
+                        </UButton>
+                    </UDropdownMenu>
 
                     <UButton icon="i-heroicons-plus"
                              color="neutral"
@@ -292,11 +304,13 @@ onBeforeRouteLeave(() => {
                 </div>
             </div>
 
-            <!-- Публичная ссылка -->
-            <div v-if="collection?.is_public && collection.public_url"
+            <!-- Ссылка на страницу: есть у публичных и личных, нет у скрытых -->
+            <div v-if="collection?.public_url"
                  class="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-primary-500/10 border border-primary-500/30 shrink-0">
                 <div class="min-w-0">
-                    <p class="text-sm font-medium">Коллекция опубликована</p>
+                    <p class="text-sm font-medium">
+                        {{ collectionVisibility(collection.visibility).label }} — открыта по ссылке
+                    </p>
 
                     <a :href="collection.public_url"
                        target="_blank"

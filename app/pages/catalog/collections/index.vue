@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CollectionRepository from "~/repos/CollectionRepository";
 import type Collection from "~/resources/Collection";
+import {CollectionVisibility} from "~/types/enums/CollectionVisibility";
 import type PaginatedCollection from "~/types/PaginatedCollection";
 
 definePageMeta({
@@ -36,13 +37,13 @@ const {data: collections, status, refresh} = await repo.lazyList<PaginatedCollec
 const columns = [
     {key: 'id', label: '#', sortable: true},
     {key: 'name', label: 'Название', sortable: true},
-    {key: 'is_public', label: 'Доступ'},
+    {key: 'visibility', label: 'Доступ'},
     {key: 'films_count', label: 'Фильмов'},
     {key: 'actions'},
 ];
 
 function makeCollection(): Collection {
-    return {id: 0, name: '', description: '', is_public: false};
+    return {id: 0, name: '', description: '', visibility: CollectionVisibility.Hidden};
 }
 
 const editRow  = ref<Collection>();
@@ -58,21 +59,45 @@ async function save(state: Collection) {
     await refresh();
 }
 
-// --- Публикация ---
-const publishing = ref<{ [key: number]: boolean }>({});
+// --- Смена уровня доступа ---
+const changing = ref<{ [key: number]: boolean }>({});
 
-async function togglePublic(collection: Collection) {
-    publishing.value[collection.id] = true;
+const visibilityOptions = Object.values(CollectionVisibility).map(value => {
+    const meta = collectionVisibility(value);
 
-    const next = !collection.is_public;
+    return {
+        value,
+        label      : meta.label,
+        description: meta.hint
+    };
+});
+
+// Три уровня не ложатся на кнопку-тумблер, поэтому в строке — меню.
+function visibilityMenu(collection: Collection) {
+    return [Object.values(CollectionVisibility).map(value => {
+        const meta = collectionVisibility(value);
+
+        return {
+            label   : meta.label,
+            icon    : meta.icon,
+            disabled: collection.visibility === value,
+            onSelect: () => changeVisibility(collection, value)
+        };
+    })];
+}
+
+async function changeVisibility(collection: Collection, visibility: CollectionVisibility) {
+    if (collection.visibility === visibility) {
+        return;
+    }
+
+    changing.value[collection.id] = true;
 
     try {
-        await repo.update({...collection, is_public: next});
+        await repo.update({...collection, visibility});
         await refresh();
 
-        toast.add({
-            title: next ? 'Коллекция опубликована' : 'Коллекция снята с публикации'
-        });
+        toast.add({title: `Доступ изменён: ${collectionVisibility(visibility).label.toLowerCase()}`});
     } catch (err: any) {
         toast.add({
             title      : 'Ошибка',
@@ -80,7 +105,7 @@ async function togglePublic(collection: Collection) {
             color      : 'error'
         });
     } finally {
-        publishing.value[collection.id] = false;
+        changing.value[collection.id] = false;
     }
 }
 
@@ -151,17 +176,19 @@ async function remove(collection: Collection) {
                 </NuxtLink>
             </template>
 
-            <template #is_public-data="{row}">
-                <UBadge :color="row.is_public ? 'primary' : 'neutral'"
-                        variant="subtle"
-                        :icon="row.is_public ? 'i-heroicons-globe-alt-20-solid' : 'i-heroicons-lock-closed-20-solid'">
-                    {{ row.is_public ? 'Публичная' : 'Приватная' }}
-                </UBadge>
+            <template #visibility-data="{row}">
+                <UTooltip :text="collectionVisibility(row.visibility).hint">
+                    <UBadge :color="collectionVisibility(row.visibility).color"
+                            variant="subtle"
+                            :icon="collectionVisibility(row.visibility).icon">
+                        {{ collectionVisibility(row.visibility).label }}
+                    </UBadge>
+                </UTooltip>
             </template>
 
             <template #actions-data="{row}">
                 <div class="flex items-center justify-end gap-2.5">
-                    <UTooltip v-if="row.is_public" text="Скопировать публичную ссылку">
+                    <UTooltip v-if="row.public_url" text="Скопировать ссылку">
                         <UButton color="neutral"
                                  variant="subtle"
                                  icon="i-heroicons-link-20-solid"
@@ -169,14 +196,15 @@ async function remove(collection: Collection) {
                                  @click="copyLink(row)"/>
                     </UTooltip>
 
-                    <UTooltip :text="row.is_public ? 'Снять с публикации' : 'Опубликовать'">
-                        <UButton color="neutral"
-                                 variant="subtle"
-                                 :icon="row.is_public ? 'i-heroicons-eye-slash-20-solid' : 'i-heroicons-globe-alt-20-solid'"
-                                 square
-                                 :loading="publishing[row.id] ?? false"
-                                 @click="togglePublic(row)"/>
-                    </UTooltip>
+                    <UDropdownMenu :items="visibilityMenu(row)">
+                        <UTooltip text="Изменить доступ">
+                            <UButton color="neutral"
+                                     variant="subtle"
+                                     :icon="collectionVisibility(row.visibility).icon"
+                                     square
+                                     :loading="changing[row.id] ?? false"/>
+                        </UTooltip>
+                    </UDropdownMenu>
 
                     <UTooltip text="Открыть">
                         <UButton color="neutral"
@@ -227,10 +255,12 @@ async function remove(collection: Collection) {
                            :maxlength="2000"/>
             </UFormField>
 
-            <UFormField name="is_public">
-                <USwitch v-model="state.is_public"
-                         label="Публичная коллекция"
-                         description="Страница станет доступна всем по прямой ссылке и попадёт в sitemap."/>
+            <UFormField label="Доступ" name="visibility"
+                        :help="collectionVisibility(state.visibility).hint">
+                <URadioGroup v-model="state.visibility"
+                             :items="visibilityOptions"
+                             variant="card"
+                             class="w-full"/>
             </UFormField>
         </template>
     </ModalEditModel>

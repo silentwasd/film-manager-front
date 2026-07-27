@@ -1,12 +1,13 @@
 import type CollectionFilm from "~/resources/CollectionFilm";
+import type {CollectionVisibility} from "~/types/enums/CollectionVisibility";
 
 export default interface Collection {
     id: number;
     name: string;
     description?: string | null;
-    is_public?: boolean;
+    visibility?: CollectionVisibility;
     public_key?: string;
-    /** Приходит только у опубликованных коллекций. */
+    /** Не приходит у скрытых коллекций. */
     public_url?: string;
     films_count?: number;
     films?: CollectionFilm[];

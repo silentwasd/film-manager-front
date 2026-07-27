@@ -3,9 +3,19 @@ import type CollectionResource from "~/resources/public/CollectionResource";
 import type Resource from "~/types/Resource";
 
 export default class CollectionRepository extends Repository {
-    protected baseUrl: string = '/collections';
-
+    /** Публичная коллекция: короткий адрес. */
     public show(key: string) {
-        return this.client.getData<Resource<CollectionResource>>(`collection.public.${key}`, `${this.baseUrl}/${key}`);
+        return this.client.getData<Resource<CollectionResource>>(
+            `collection.public.${key}`,
+            `/collections/${key}`
+        );
+    }
+
+    /** Личная коллекция: единственный адрес — внутри профиля автора. */
+    public showPersonal(userKey: string, key: string) {
+        return this.client.getData<Resource<CollectionResource>>(
+            `collection.personal.${userKey}.${key}`,
+            `/users/${userKey}/collections/${key}`
+        );
     }
 }

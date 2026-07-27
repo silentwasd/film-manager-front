@@ -6,15 +6,16 @@ definePageMeta({
     layout: 'management'
 });
 
-const config = useRuntimeConfig();
-const route  = useRoute();
-const key    = route.params.key as string;
+const config        = useRuntimeConfig();
+const route         = useRoute();
+const userKey       = route.params.key as string;
+const collectionKey = route.params.collection as string;
 
 const repo                    = new CollectionRepository();
-const {data: response, error} = await repo.show(key);
+const {data: response, error} = await repo.showPersonal(userKey, collectionKey);
 
-// Сюда попадают только публичные коллекции. Личная, скрытая и несуществующая
-// дают одинаковый 404 — по ответу нельзя понять, существует ли такой id.
+// Сюда попадают только личные коллекции. Публичная (у неё короткий адрес),
+// скрытая, чужая и несуществующая дают одинаковый 404.
 if (error.value || !response.value?.data) {
     throw createError({
         statusCode: 404,
@@ -25,9 +26,6 @@ if (error.value || !response.value?.data) {
 
 const collection = computed<CollectionResource>(() => response.value!.data);
 
-// Обычные константы, а не computed: данные статичны после await, а ленивый
-// computed вычислился бы при резолве head уже вне setup-контекста, где
-// fileUrl() не может дотянуться до useRuntimeConfig().
 const films = collection.value.films ?? [];
 
 const description = collection.value.description
@@ -39,7 +37,7 @@ const cover = firstCover
     ? fileUrl(firstCover as string)
     : config.public.externalUrl + '/img/cinema.png';
 
-const canonical = `${config.public.externalUrl}/collections/${collection.value.public_key}`;
+const canonical = config.public.externalUrl + collection.value.path;
 
 useSeoMeta({
     title        : `${collection.value.name} // ВКинопоиск`,
@@ -54,6 +52,9 @@ useSeoMeta({
 });
 
 useHead({
+    // Личные коллекции не индексируются: у них нет места в sitemap,
+    // и попадать в выдачу они не должны.
+    meta: [{name: 'robots', content: 'noindex, follow'}],
     link: [{rel: 'canonical', href: canonical}]
 });
 </script>
