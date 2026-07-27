@@ -62,7 +62,7 @@ function close() {
     <UModal v-model:open="open" :dismissible="!saving">
         <template #content>
             <UForm ref="form" :state="state" @submit="save">
-                <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+                <div class="flex flex-row items-center p-5 border-b dark:border-b-neutral-700">
                     <h3 class="font-semibold text-lg basis-full">
                         <slot v-if="state.id > 0" name="edit-title" :state="state">Модель #{{ state.id }}</slot>
                         <slot v-else name="create-title">Новая модель</slot>
@@ -76,7 +76,7 @@ function close() {
                     <slot name="default" :state="state"/>
                 </div>
 
-                <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-gray-700">
+                <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-neutral-700">
                     <UButton type="submit" :loading="saving" :disabled="readonly"
                              class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200">
                         Сохранить

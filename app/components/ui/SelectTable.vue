@@ -71,11 +71,11 @@ function toggleSort(key: string) {
 
 <template>
     <div class="flex flex-col border rounded-md dark:border-neutral-700">
-        <div v-if="$slots.filters" class="flex flex-wrap gap-2.5 border-b p-2.5 dark:border-b-gray-700 shrink-0">
+        <div v-if="$slots.filters" class="flex flex-wrap gap-2.5 border-b p-2.5 dark:border-b-neutral-700 shrink-0">
             <slot name="filters"></slot>
         </div>
 
-        <div v-if="$slots.actions" class="flex gap-2.5 justify-between p-2.5 border-b dark:border-b-gray-700 shrink-0">
+        <div v-if="$slots.actions" class="flex gap-2.5 justify-between p-2.5 border-b dark:border-b-neutral-700 shrink-0">
             <div class="hidden lg:flex gap-2.5 items-center">
                 <slot v-if="(selected && selected.length > 0) || !selected" name="selected"></slot>
             </div>
@@ -110,7 +110,7 @@ function toggleSort(key: string) {
             </UTable>
         </div>
 
-        <div v-if="rows.length > 0" class="flex justify-between items-center border-t p-2.5 dark:border-t-gray-700 shrink-0">
+        <div v-if="rows.length > 0" class="flex justify-between items-center border-t p-2.5 dark:border-t-neutral-700 shrink-0">
             <div class="hidden md:block">
                 <p v-if="total && ((selected && selected.length < 1) || !selected)" class="text-sm">Всего записей: {{ total }}</p>
                 <p v-if="selected && selected.length > 0" class="text-sm">Выделено записей: {{ selected.length }}</p>

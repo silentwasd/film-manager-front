@@ -13,7 +13,7 @@ const emit = defineEmits<{
 <template>
     <UModal :open="opened" @update:open="$event ? null : emit('cancel')">
         <template #content>
-            <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+            <div class="flex flex-row items-center p-5 border-b dark:border-b-neutral-700">
                 <h3 class="font-semibold text-lg basis-full">Подтвердите действие</h3>
 
                 <UButton icon="i-heroicons-x-mark" color="neutral" variant="link"
@@ -26,7 +26,7 @@ const emit = defineEmits<{
                 </slot>
             </div>
 
-            <div class="flex items-center justify-end p-5 border-t dark:border-t-gray-700">
+            <div class="flex items-center justify-end p-5 border-t dark:border-t-neutral-700">
                 <UButton color="error" class="dark:bg-error-400 dark:hover:bg-error-300"
                          :loading="removing"
                          @click="emit('confirm')">

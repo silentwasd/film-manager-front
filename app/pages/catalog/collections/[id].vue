@@ -354,7 +354,7 @@ onBeforeRouteLeave(() => {
     <!-- Модалка добавления фильма -->
     <UModal v-model:open="addFilmOpen" :dismissible="!addFilmSaving">
         <template #content>
-            <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+            <div class="flex flex-row items-center p-5 border-b dark:border-b-neutral-700">
                 <h3 class="font-semibold text-lg basis-full">Добавить фильм в коллекцию</h3>
 
                 <UButton icon="i-heroicons-x-mark"
@@ -385,7 +385,7 @@ onBeforeRouteLeave(() => {
                 </UFormField>
             </div>
 
-            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-gray-700">
+            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-neutral-700">
                 <UButton :loading="addFilmSaving"
                          :disabled="!addFilmObject"
                          class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200"
@@ -405,7 +405,7 @@ onBeforeRouteLeave(() => {
     <!-- Модалка редактирования заметки -->
     <UModal :open="!!editNoteFilm" :dismissible="!editNoteSaving" @update:open="v => { if (!v) editNoteFilm = null }">
         <template #content>
-            <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+            <div class="flex flex-row items-center p-5 border-b dark:border-b-neutral-700">
                 <h3 class="font-semibold text-lg basis-full">Заметка к фильму</h3>
 
                 <UButton icon="i-heroicons-x-mark"
@@ -431,7 +431,7 @@ onBeforeRouteLeave(() => {
                 </UFormField>
             </div>
 
-            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-gray-700">
+            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-neutral-700">
                 <UButton :loading="editNoteSaving"
                          class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200"
                          @click="saveNote">

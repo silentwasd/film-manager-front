@@ -107,7 +107,7 @@ async function addToCollection() {
 
     <UModal v-model:open="open" :dismissible="!saving">
         <template #content>
-            <div class="flex flex-row items-center p-5 border-b dark:border-b-gray-700">
+            <div class="flex flex-row items-center p-5 border-b dark:border-b-neutral-700">
                 <h3 class="font-semibold text-lg basis-full">Добавить в коллекцию</h3>
 
                 <UButton icon="i-heroicons-x-mark"
@@ -187,7 +187,7 @@ async function addToCollection() {
                 </template>
             </div>
 
-            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-gray-700">
+            <div class="flex items-center justify-end gap-2.5 p-5 border-t dark:border-t-neutral-700">
                 <UButton :loading="saving"
                          :disabled="!selectedId"
                          class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200"
