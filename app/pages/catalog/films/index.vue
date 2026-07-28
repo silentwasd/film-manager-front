@@ -175,6 +175,16 @@ const formatOptions: { label: string; id: FilmFormat }[] = Object.values(FilmFor
 }));
 
 const filmWatcherRepo = new FilmWatcherRepository();
+
+const importShown = ref<boolean>(false);
+
+/**
+ * Модалка после импорта остаётся открытой и показывает лог, поэтому здесь
+ * только обновляем таблицу — в редактор уводит кнопка внутри неё.
+ */
+async function onImported() {
+    await refresh();
+}
 </script>
 
 <template>
@@ -233,6 +243,13 @@ const filmWatcherRepo = new FilmWatcherRepository();
             </template>
 
             <template #actions>
+                <UButton icon="i-heroicons-arrow-down-tray"
+                         color="neutral"
+                         variant="subtle"
+                         @click="importShown = true">
+                    С Шикимори
+                </UButton>
+
                 <UButton icon="i-heroicons-plus"
                          color="neutral"
                          variant="subtle"
@@ -347,6 +364,8 @@ const filmWatcherRepo = new FilmWatcherRepository();
             </template>
         </UiSelectTable>
     </UiManagementMain>
+
+    <ModalImportShikimori v-model="importShown" @imported="onImported"/>
 
     <ModalRemoveConfirm :opened="!!removeRow"
                         @confirm="remove"
