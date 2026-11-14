@@ -5,6 +5,7 @@ import type GenreResource from "~/resources/management/GenreResource";
 import type CountryResource from "~/resources/management/CountryResource";
 import type TagResource from "~/resources/management/TagResource";
 import type CompanyResource from "~/resources/management/CompanyResource";
+import type FranchiseResource from "~/resources/management/FranchiseResource";
 
 export default interface Film {
     id: number;
@@ -27,4 +28,5 @@ export default interface Film {
     countries?: CountryResource[] | number[];
     tags?: TagResource[] | number[];
     companies?: CompanyResource[] | number[];
+    franchises?: FranchiseResource[] | number[];
 }

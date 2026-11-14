@@ -119,6 +119,20 @@ const composers     = computed(() => (props.film.people ?? []).filter(person => 
             </td>
         </tr>
 
+        <tr v-if="(film.franchises ?? []).length > 0">
+            <td class="font-medium align-top">Франшиза</td>
+            <td class="font-light">
+                <UiCommaExpandable :items="film.franchises ?? []">
+                    <template #default="{item}">
+                        <NuxtLink class="underline underline-offset-2 hover:text-primary-500"
+                                  :to="`/catalog/franchises/${item.id}`">
+                            {{ item.name }}
+                        </NuxtLink>
+                    </template>
+                </UiCommaExpandable>
+            </td>
+        </tr>
+
         <tr v-if="film.release_date">
             <td class="font-medium">Дата премьеры</td>
             <td class="font-light">

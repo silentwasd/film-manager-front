@@ -15,6 +15,7 @@ import type CountryResource from "~/resources/management/CountryResource";
 import TagRepository from "~/repos/management/TagRepository";
 import type TagResource from "~/resources/management/TagResource";
 import type CompanyResource from "~/resources/management/CompanyResource";
+import type FranchiseResource from "~/resources/management/FranchiseResource";
 import type Resource from "~/types/Resource";
 
 definePageMeta({
@@ -152,6 +153,7 @@ watch(editRow, (value: Partial<Film> | undefined) => {
     editRow.value.countries = value.countries?.map(country => (country as CountryResource).id) ?? [];
     editRow.value.tags      = value.tags?.map(tag => (tag as TagResource).id) ?? [];
     editRow.value.companies = value.companies?.map(company => (company as CompanyResource).id) ?? [];
+    editRow.value.franchises = value.franchises?.map(franchise => (franchise as FranchiseResource).id) ?? [];
 });
 
 function makeResource(): Partial<Film> {

@@ -4,10 +4,12 @@ import GenreRepository from "~/repos/management/GenreRepository";
 import CountryRepository from "~/repos/management/CountryRepository";
 import TagRepository from "~/repos/management/TagRepository";
 import CompanyRepository from "~/repos/management/CompanyRepository";
+import FranchiseRepository from "~/repos/management/FranchiseRepository";
 import type GenreResource from "~/resources/management/GenreResource";
 import type CountryResource from "~/resources/management/CountryResource";
 import type TagResource from "~/resources/management/TagResource";
 import type CompanyResource from "~/resources/management/CompanyResource";
+import type FranchiseResource from "~/resources/management/FranchiseResource";
 import type Film from "~/resources/Film";
 import FilmRepository from "~/repos/FilmRepository";
 
@@ -45,6 +47,7 @@ save.value = async () => {
             countries       : state.value.countries?.map(country => (country as CountryResource).id),
             tags            : state.value.tags?.map(tag => (tag as TagResource).id),
             companies       : state.value.companies?.map(company => (company as CompanyResource).id),
+            franchises      : state.value.franchises?.map(franchise => (franchise as FranchiseResource).id),
             cover           : state.value.cover instanceof File ? state.value.cover : undefined,
             background_cover: state.value.background_cover instanceof File ? state.value.background_cover : undefined
         });
@@ -217,6 +220,20 @@ save.value = async () => {
                     <template v-if="(state.companies ?? []).length > 0" #label>
                         {{
                             (state.companies ?? []).map(company => (company as CompanyResource).name).join(', ')
+                        }}
+                    </template>
+                </UiRepoSearchSelect>
+            </UFormField>
+
+            <UFormField label="Франшизы" name="franchises">
+                <UiRepoSearchSelect :repo="new FranchiseRepository()"
+                                    class="w-full"
+                                    placeholder="Выберите франшизы из списка"
+                                    multiple
+                                    v-model="state.franchises">
+                    <template v-if="(state.franchises ?? []).length > 0" #label>
+                        {{
+                            (state.franchises ?? []).map(franchise => (franchise as FranchiseResource).name).join(', ')
                         }}
                     </template>
                 </UiRepoSearchSelect>

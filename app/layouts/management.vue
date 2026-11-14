@@ -47,6 +47,10 @@ const nav = computed(() => [{
         label: 'Компании',
         icon : 'i-heroicons-building-library-20-solid',
         to   : '/catalog/companies'
+    }, {
+        label: 'Франшизы',
+        icon : 'i-heroicons-squares-2x2-20-solid',
+        to   : '/catalog/franchises'
     }, ...profile.value?.role == UserRole.Admin ? [{
         label: 'Жанры',
         icon : 'i-heroicons-fire-16-solid',
