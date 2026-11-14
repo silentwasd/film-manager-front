@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type Film from "~/resources/Film";
 import {FilmFormat} from "~/types/enums/FilmFormat";
+import {FilmWatchStatus} from "~/types/enums/FilmWatchStatus";
 
 /**
  * Таймлайн тайтлов с двумя ветками: фильмы слева, сериалы (+ мини-сериалы)
@@ -11,6 +12,8 @@ import {FilmFormat} from "~/types/enums/FilmFormat";
  */
 const props = defineProps<{
     films: Film[];
+    // film_id => статус просмотра текущего пользователя; пусто — гость
+    statuses?: Record<number, FilmWatchStatus>;
 }>();
 
 type Branch = 'films' | 'series';
@@ -108,11 +111,36 @@ const rows = computed<(YearRow | GapRow)[]>(() => {
     return result;
 });
 
+const hasStatuses = computed(() => Object.keys(props.statuses ?? {}).length > 0);
+
+const statusOf = (film: Film) => props.statuses?.[film.id];
+
+// Прогресс по текущему разделу (кино или анимация).
+const progress = computed(() => {
+    const total   = visible.value.length;
+    const watched = visible.value.filter(film => statusOf(film) === FilmWatchStatus.Watched).length;
+
+    return {total, watched, percent: total ? Math.round(watched / total * 100) : 0};
+});
+
 const gapLabel = (years: number) => `${years} ${plural(years, 'год', 'года', 'лет')} без релизов`;
 </script>
 
 <template>
     <div class="font-roboto">
+        <div v-if="hasStatuses" class="mx-auto mb-5 w-full max-w-md">
+            <div class="flex items-baseline justify-between text-sm mb-1.5">
+                <span class="font-medium">Просмотрено</span>
+                <span class="text-muted tabular-nums">
+                    {{ progress.watched }} из {{ progress.total }} · {{ progress.percent }}%
+                </span>
+            </div>
+            <div class="h-2 rounded-full bg-elevated overflow-hidden">
+                <div class="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                     :style="{width: `${progress.percent}%`}"/>
+            </div>
+        </div>
+
         <div v-if="bothSections" class="flex justify-center gap-2 pb-5">
             <UButton v-for="option in sectionOptions"
                      :key="option.value"
@@ -148,7 +176,7 @@ const gapLabel = (years: number) => `${years} ${plural(years, 'год', 'год�
                 <template v-for="(row, index) in rows" :key="`d${index}`">
                     <template v-if="row.kind === 'year'">
                         <div class="flex flex-wrap justify-end content-start gap-4 py-4 pe-2 border-t border-default/60">
-                            <UiTimelineCard v-for="film in row.films" :key="film.id" :film="film" branch="films"/>
+                            <UiTimelineCard v-for="film in row.films" :key="film.id" :film="film" branch="films" :status="statusOf(film)"/>
                         </div>
 
                         <div class="flex justify-center py-4 border-t border-default/60">
@@ -159,7 +187,7 @@ const gapLabel = (years: number) => `${years} ${plural(years, 'год', 'год�
                         </div>
 
                         <div class="flex flex-wrap content-start gap-4 py-4 ps-2 border-t border-default/60">
-                            <UiTimelineCard v-for="film in row.series" :key="film.id" :film="film" branch="series"/>
+                            <UiTimelineCard v-for="film in row.series" :key="film.id" :film="film" branch="series" :status="statusOf(film)"/>
                         </div>
                     </template>
 
@@ -200,8 +228,8 @@ const gapLabel = (years: number) => `${years} ${plural(years, 'год', 'год�
                         <p class="text-lg font-bold leading-5 tabular-nums mb-2.5">{{ row.year ?? 'Без года' }}</p>
 
                         <div class="flex flex-wrap gap-3">
-                            <UiTimelineCard v-for="film in row.films" :key="film.id" :film="film" branch="films"/>
-                            <UiTimelineCard v-for="film in row.series" :key="film.id" :film="film" branch="series"/>
+                            <UiTimelineCard v-for="film in row.films" :key="film.id" :film="film" branch="films" :status="statusOf(film)"/>
+                            <UiTimelineCard v-for="film in row.series" :key="film.id" :film="film" branch="series" :status="statusOf(film)"/>
                         </div>
                     </div>
 

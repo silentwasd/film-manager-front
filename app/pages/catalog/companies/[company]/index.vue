@@ -32,6 +32,18 @@ const viewOptions = [
 ] as const;
 
 const view = ref<'timeline' | 'grid'>('timeline');
+
+// Статусы просмотра — только для вошедшего и только в браузере: публичная
+// страница студии рендерится на сервере одинаково для всех.
+const token = useToken();
+
+const {data: watchStatuses} = await useAsyncData(
+    `company.${companyId}.watch-statuses`,
+    async () => token.value
+        ? (await companyRepo.watchStatuses(companyId).catch(() => null))?.data ?? {}
+        : {},
+    {server: false, default: () => ({})}
+);
 </script>
 
 <template>
@@ -73,7 +85,9 @@ const view = ref<'timeline' | 'grid'>('timeline');
                         </div>
                     </div>
 
-                    <UiFilmTimeline v-if="view == 'timeline'" :films="companyData.films ?? []"/>
+                    <UiFilmTimeline v-if="view == 'timeline'"
+                                    :films="companyData.films ?? []"
+                                    :statuses="watchStatuses"/>
 
                     <div v-else class="flex flex-wrap gap-5">
                         <NuxtLink
