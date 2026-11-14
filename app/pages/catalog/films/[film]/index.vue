@@ -5,6 +5,7 @@ import {UserRole} from "~/types/enums/UserRole";
 import {PersonRole} from "~/types/enums/PersonRole";
 import FeedbackRepository from "~/repos/FeedbackRepository";
 import {FilmFormat} from "~/types/enums/FilmFormat";
+import type FranchiseResource from "~/resources/management/FranchiseResource";
 
 definePageMeta({
     layout: 'management'
@@ -104,7 +105,7 @@ const {
                     </div>
                 </div>
 
-                <div class="flex flex-col font-roboto gap-10 grow">
+                <div class="flex flex-col font-roboto gap-10 grow min-w-0">
                     <div class="flex flex-col gap-5">
                         <div>
                             <h1 class="font-black text-4xl leading-9">{{ filmData.name }}</h1>
@@ -122,6 +123,11 @@ const {
                             </p>
                         </div>
                     </div>
+
+                    <BlockFranchiseStrip v-for="franchise in (filmData.franchises ?? []) as FranchiseResource[]"
+                                         :key="franchise.id"
+                                         :franchise="franchise"
+                                         :current-id="filmData.id"/>
 
                     <div v-if="filmData.people">
                         <div class="flex justify-between items-center">
