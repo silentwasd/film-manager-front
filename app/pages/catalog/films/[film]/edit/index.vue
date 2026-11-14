@@ -151,6 +151,18 @@ save.value = async () => {
                 </USelectMenu>
             </UFormField>
 
+            <UFormField v-if="isSerial(state.format)"
+                        label="Сезонов"
+                        name="seasons"
+                        hint="Нужно, чтобы оставлять отзывы на отдельные сезоны">
+                <UInput type="number"
+                        class="w-full"
+                        :min="1"
+                        :max="999"
+                        :model-value="state.seasons ?? undefined"
+                        @update:model-value="state.seasons = $event ? Number($event) : null"/>
+            </UFormField>
+
             <UFormField label="Год производства" name="produced_year">
                 <UInput type="number"
                         class="w-full"

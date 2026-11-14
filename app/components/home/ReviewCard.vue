@@ -51,6 +51,8 @@ const when = computed(() => {
                 </span>
             </div>
 
+            <p v-if="review.season" class="text-xs font-medium text-primary">{{ seasonLabel(review.season) }}</p>
+
             <p class="mt-1 text-sm font-light leading-5 line-clamp-3 grow">«{{ review.text }}»</p>
 
             <p class="mt-1.5 text-xs text-muted truncate">

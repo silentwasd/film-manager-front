@@ -55,6 +55,9 @@ const {
           data   : feedback,
           refresh: refreshFeedback
       }            = await feedbackRepo.list(`film.${filmId}.feedback`);
+
+// Лайки под постером — про тайтл целиком; оценки сезонов живут в блоке отзывов.
+const overallFeedback = computed(() => (feedback.value?.data ?? []).filter(item => !item.season));
 </script>
 
 <template>
@@ -80,8 +83,8 @@ const {
                             <UIcon name="i-heroicons-film" class="text-8xl"/>
                         </div>
 
-                        <BlockReactions v-if="(feedback?.data ?? []).filter(item => item.reaction != 0).length > 0"
-                                        :items="feedback?.data ?? []"/>
+                        <BlockReactions v-if="overallFeedback.filter(item => item.reaction != 0).length > 0"
+                                        :items="overallFeedback"/>
 
                         <LazyUiWatcherStatusCreateOrUpdate v-if="profile" :film-id="filmData.id"/>
 
@@ -142,7 +145,10 @@ const {
                         <p v-else>Людей здесь нет.</p>
                     </div>
 
-                    <BlockFeedback :film-id="filmId" :items="feedback?.data ?? []" :refresh="refreshFeedback"/>
+                    <BlockFeedback :film-id="filmId"
+                                   :seasons="isSerial(filmData.format) ? (filmData.seasons ?? 0) : 0"
+                                   :items="feedback?.data ?? []"
+                                   :refresh="refreshFeedback"/>
                 </div>
             </div>
         </UContainer>

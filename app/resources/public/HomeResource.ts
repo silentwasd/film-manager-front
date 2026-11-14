@@ -28,6 +28,7 @@ export interface HomeReview {
     id: number;
     text: string;
     reaction: -1 | 0 | 1;
+    season: number | null;
     user: string | null;
     updated_at: string;
     film: HomeFilm;

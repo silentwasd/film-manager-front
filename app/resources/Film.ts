@@ -13,6 +13,7 @@ export default interface Film {
     name: string;
     original_name: string | null;
     format: FilmFormat;
+    seasons?: number | null;
     cover?: string | File;
     cover_thumb?: string | null;
     background_cover?: string | File;

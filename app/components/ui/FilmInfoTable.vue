@@ -20,6 +20,11 @@ const composers     = computed(() => (props.film.people ?? []).filter(person => 
             <td class="font-light">{{ filmFormat(film.format) }}</td>
         </tr>
 
+        <tr v-if="film.seasons && isSerial(film.format)">
+            <td class="font-medium">Сезонов</td>
+            <td class="font-light">{{ film.seasons }}</td>
+        </tr>
+
         <tr v-if="film.produced_year">
             <td class="font-medium">Год производства</td>
             <td class="font-light">
