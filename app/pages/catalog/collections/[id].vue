@@ -406,7 +406,7 @@ onBeforeRouteLeave(() => {
                                               :to="`/catalog/films/${element.film?.id}`">
                                         <div v-if="element.film?.cover"
                                              class="bg-no-repeat bg-cover bg-center rounded w-8 h-8 shrink-0"
-                                             :style="`background-image: url(${fileUrl(element.film.cover as string)})`"></div>
+                                             :style="`background-image: url(${coverThumb(element.film)})`"></div>
 
                                         <UIcon v-else name="i-heroicons-film" class="w-8 h-8 shrink-0"/>
 

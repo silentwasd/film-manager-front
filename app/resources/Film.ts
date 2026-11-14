@@ -14,6 +14,7 @@ export default interface Film {
     original_name: string | null;
     format: FilmFormat;
     cover?: string | File;
+    cover_thumb?: string | null;
     background_cover?: string | File;
     produced_year?: number;
     release_date?: string;

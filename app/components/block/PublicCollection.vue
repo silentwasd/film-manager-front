@@ -90,7 +90,7 @@ async function copyLink() {
                           :to="`/catalog/films/${entry.film.id}`">
                     <div class="relative">
                         <img v-if="entry.film.cover"
-                             :src="fileUrl(entry.film.cover as string)"
+                             :src="coverThumb(entry.film)"
                              :alt="entry.film.name"
                              loading="lazy"
                              class="w-full h-50 md:h-62.5 object-contain bg-linear-to-br from-neutral-800 to-neutral-950 rounded-lg"/>

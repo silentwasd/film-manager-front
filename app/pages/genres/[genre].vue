@@ -43,7 +43,7 @@ useSeoMeta({
                           :to="`/catalog/films/${film.id}`"
                           v-for="film in genre?.data.films ?? []">
                     <img v-if="film.cover"
-                         :src="fileUrl(film.cover)"
+                         :src="coverThumb(film)"
                          :alt="film.name"
                          class="w-full h-50 md:h-62.5 object-contain bg-linear-to-br from-neutral-800 to-neutral-950 rounded-lg"/>
 

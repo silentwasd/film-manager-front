@@ -49,9 +49,12 @@ const view = ref<'timeline' | 'grid'>('timeline');
                 class="w-[180px]"
                 :title="film.name"
                 :to="`/catalog/films/${film.id}`">
-                <div v-if="film?.cover"
-                     class="w-full h-[260px] bg-cover bg-no-repeat bg-center rounded-lg"
-                     :style="`background-image: url(${fileUrl(film?.cover as string)});`"/>
+                <img v-if="film?.cover"
+                     :src="coverThumb(film)"
+                     alt=""
+                     loading="lazy"
+                     decoding="async"
+                     class="w-full h-[260px] object-cover rounded-lg"/>
 
                 <div class="mt-1.5">
                     <p class="font-medium leading-5 truncate">

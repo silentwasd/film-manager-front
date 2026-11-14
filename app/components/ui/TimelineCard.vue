@@ -22,9 +22,15 @@ const isUpcoming = computed(() => !!props.film.release_date && props.film.releas
         <div class="relative w-full aspect-[2/3] rounded-lg overflow-hidden bg-elevated ring-1 ring-default
                     transition group-hover:ring-2"
              :class="branch === 'films' ? 'group-hover:ring-primary' : 'group-hover:ring-amber-500'">
-            <div v-if="film.cover"
-                 class="absolute inset-0 bg-cover bg-center bg-no-repeat transition duration-300 group-hover:scale-105"
-                 :style="`background-image: url(${fileUrl(film.cover as string)});`"/>
+            <!-- <img loading="lazy">, а не CSS-фон: фоны браузер качает все сразу,
+                 и таймлайн студии на 140 тайтлов тянул бы все постеры разом -->
+            <img v-if="film.cover"
+                 :src="coverThumb(film)"
+                 alt=""
+                 loading="lazy"
+                 decoding="async"
+                 draggable="false"
+                 class="absolute inset-0 size-full object-cover transition duration-300 group-hover:scale-105"/>
             <div v-else class="absolute inset-0 flex items-center justify-center text-dimmed">
                 <UIcon name="i-lucide-film" class="size-8"/>
             </div>

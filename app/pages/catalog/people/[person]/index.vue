@@ -136,7 +136,7 @@ const activeRole = ref(personData.value?.roles?.length ? personData.value.roles[
                                 :to="`/catalog/films/${person.film_id}`">
                                 <div v-if="person.film?.cover"
                                      class="w-full h-57.5 object-cover bg-cover bg-center bg-no-repeat rounded-lg"
-                                     :style="`background-image: url(${fileUrl(person.film?.cover as string)});`"/>
+                                     :style="`background-image: url(${coverThumb(person.film)});`"/>
 
                                 <div class="mt-1.5">
                                     <p class="font-medium leading-5 truncate">

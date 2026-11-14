@@ -189,7 +189,7 @@ async function remove(watcher: FilmWatcher) {
                           :to="`/catalog/films/${row.film.id}`">
                     <div v-if="row.film.cover"
                          class="bg-no-repeat bg-cover bg-center rounded w-8 h-8"
-                         :style="`background-image: url(${fileUrl(row.film.cover)})`"></div>
+                         :style="`background-image: url(${coverThumb(row.film)})`"></div>
 
                     <UIcon v-else name="i-heroicons-film" class="w-8 h-8"/>
 

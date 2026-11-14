@@ -265,7 +265,7 @@ async function onImported() {
                           :to="`/catalog/films/${row.id}`">
                     <div v-if="row.cover"
                          class="bg-no-repeat bg-cover bg-center rounded w-8 h-8 shrink-0"
-                         :style="`background-image: url(${config.public.storageUrl}/${row.cover})`"></div>
+                         :style="`background-image: url(${coverThumb(row)})`"></div>
 
                     <UIcon v-else name="i-heroicons-film" class="w-8 h-8 shrink-0"/>
 
