@@ -25,6 +25,13 @@ useSeoMeta({
     ogLocale     : 'ru_RU',
     ogSiteName   : 'ВКинопоиск'
 });
+
+const viewOptions = [
+    {value: 'timeline', label: 'Таймлайн', icon: 'i-lucide-git-branch'},
+    {value: 'grid', label: 'Сетка', icon: 'i-lucide-layout-grid'}
+] as const;
+
+const view = ref<'timeline' | 'grid'>('timeline');
 </script>
 
 <template>
@@ -49,9 +56,26 @@ useSeoMeta({
                 </div>
 
                 <template v-if="(companyData.films ?? []).length > 0">
-                    <h1 class="font-bold text-2xl">Фильмы</h1>
+                    <div class="flex flex-wrap items-center justify-between gap-2.5">
+                        <h1 class="font-bold text-2xl">
+                            <span>Тайтлы</span>
+                            <span class="ms-1.5 text-neutral-400 font-normal">{{ companyData.films?.length }}</span>
+                        </h1>
 
-                    <div class="flex flex-wrap gap-5">
+                        <div class="flex gap-2.5">
+                            <UButton v-for="option in viewOptions"
+                                     :key="option.value"
+                                     :color="view == option.value ? 'primary' : 'neutral'"
+                                     :variant="view == option.value ? 'solid' : 'soft'"
+                                     :icon="option.icon"
+                                     :label="option.label"
+                                     @click="view = option.value"/>
+                        </div>
+                    </div>
+
+                    <UiFilmTimeline v-if="view == 'timeline'" :films="companyData.films ?? []"/>
+
+                    <div v-else class="flex flex-wrap gap-5">
                         <NuxtLink
                             v-for="film in companyData.films ?? []"
                             class="w-[180px]"
