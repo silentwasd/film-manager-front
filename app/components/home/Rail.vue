@@ -151,9 +151,10 @@ onBeforeUnmount(() => resizeObserver?.disconnect());
             </div>
         </div>
 
-        <!-- py-2 — место под тень и рамку при наведении: overflow-x режет и по вертикали -->
+        <!-- p-2 -m-2 — место под рамку при наведении: overflow-x режет её со всех сторон,
+             у крайних карточек — слева и справа; scroll-px-2 — чтобы snap не съедал этот отступ -->
         <div ref="strip"
-             class="flex items-start gap-3 overflow-x-auto py-2 -my-2 select-none
+             class="flex items-start gap-3 overflow-x-auto p-2 -m-2 scroll-px-2 select-none
                     [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
              :class="dragging ? 'cursor-grabbing' : 'snap-x'"
              :style="edgeMask"
