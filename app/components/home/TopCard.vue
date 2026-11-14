@@ -19,7 +19,7 @@ defineProps<{
         <!-- цифра Roboto Black — ~0.58em (87px при 150px); постер заходит на неё
              примерно на четверть. Место только под одну цифру: топ — девятка -->
         <div class="relative pl-[43px] sm:pl-[60px]">
-            <span class="absolute left-0 -bottom-1 font-black leading-[0.75] select-none text-[110px] sm:text-[150px]
+            <span class="absolute left-0 bottom-1 font-black leading-[0.75] select-none text-[110px] sm:text-[150px]
                          text-(--ui-bg) [paint-order:stroke_fill] [-webkit-text-stroke:6px_var(--ui-border-accented)]
                          transition group-hover:[-webkit-text-stroke-color:var(--ui-primary)]">
                 {{ rank }}
