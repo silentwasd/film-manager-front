@@ -149,7 +149,7 @@ const hasShelves  = computed(() => !!personal.value && (personal.value.must_fini
 
                     <HomeRail v-if="home.data.top.length"
                               title="Любимое зрителями"
-                              subtitle="Десятка по реакциям в отзывах"
+                              subtitle="Девятка по реакциям в отзывах"
                               icon="i-lucide-trophy">
                         <HomeTopCard v-for="(film, i) in home.data.top"
                                      :key="film.id"
