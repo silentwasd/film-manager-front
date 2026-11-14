@@ -124,9 +124,8 @@ const {
                         </div>
                     </div>
 
-                    <BlockFranchiseStrip v-for="franchise in (filmData.franchises ?? []) as FranchiseResource[]"
-                                         :key="franchise.id"
-                                         :franchise="franchise"
+                    <BlockFranchiseStrip v-if="(filmData.franchises ?? []).length > 0"
+                                         :franchises="filmData.franchises as FranchiseResource[]"
                                          :current-id="filmData.id"/>
 
                     <div v-if="filmData.people">

@@ -2,226 +2,102 @@
 import type Film from "~/resources/Film";
 import type FranchiseResource from "~/resources/management/FranchiseResource";
 import FranchiseRepository from "~/repos/management/FranchiseRepository";
-import {FilmFormat} from "~/types/enums/FilmFormat";
 import type {FilmWatchStatus} from "~/types/enums/FilmWatchStatus";
 
 /**
- * Лента франшизы на странице фильма: все её тайтлы по хронологии, текущий
- * подсвечен, и лента сама доезжает до него.
- *
- * Листается стрелками по краям, клавишами ←/→ (когда лента в фокусе),
- * перетаскиванием мышью и, на тачскрине, обычным свайпом.
+ * Блок «Франшиза» на странице фильма: одна лента и, если франшиз несколько,
+ * переключатель между ними — две ленты подряд читаются как шум.
+ * По умолчанию открыта самая узкая франшиза: у «Нет пути домой» это
+ * «Человек-паук» (28), а не вся MCU (68).
  */
 const props = defineProps<{
-    franchise: FranchiseResource;
+    franchises: FranchiseResource[];
     currentId: number;
 }>();
 
-const SERIES_FORMATS = [FilmFormat.Series, FilmFormat.MiniSeries, FilmFormat.CartoonSeries];
-
 const sortKey = (film: Film) => film.release_date ?? (film.produced_year ? `${film.produced_year}-99` : '9999');
 
-const films = computed(() => [...props.franchise.films ?? []].sort((a, b) =>
-    sortKey(a).localeCompare(sortKey(b)) || a.id - b.id
-));
+// Новые слева, старые справа — как на таймлайне студии, где свежее сверху.
+const newestFirst = (films: Film[]) => [...films].sort((a, b) => sortKey(b).localeCompare(sortKey(a)) || b.id - a.id);
 
-const position = computed(() => films.value.findIndex(film => film.id == props.currentId) + 1);
+// Франшиза из одного этого фильма ленты не даёт — такие не показываем.
+const options = computed(() => props.franchises
+    .filter(franchise => (franchise.films ?? []).length > 1)
+    .map(franchise => ({...franchise, films: newestFirst(franchise.films ?? [])}))
+    .sort((a, b) => a.films.length - b.films.length || a.name.localeCompare(b.name))
+);
 
-// Статусы просмотра — только для вошедшего и только в браузере, как на таймлайне.
+const selectedId = ref<number | undefined>(options.value[0]?.id);
+
+const selected = computed(() => options.value.find(option => option.id == selectedId.value) ?? options.value[0]);
+
+// Номер по хронологии — с самого старого, хоть лента и идёт от новых: «1 из 16» — первый.
+const position = computed(() => {
+    const films = selected.value?.films ?? [];
+    const index = films.findIndex(film => film.id == props.currentId);
+
+    return index < 0 ? 0 : films.length - index;
+});
+
+// Статусы просмотра — только для вошедшего и только в браузере; по франшизе
+// грузятся при первом её открытии и дальше берутся из памяти.
 const token    = useToken();
-const statuses = ref<Record<number, FilmWatchStatus>>({});
-const strip    = ref<HTMLElement>();
+const statuses = ref<Record<number, Record<number, FilmWatchStatus>>>({});
 
-// --- стрелки: видны, только когда есть куда листать ---
-
-const canLeft  = ref(false);
-const canRight = ref(false);
-
-function updateEdges() {
-    const el = strip.value;
-
-    if (!el)
+async function loadStatuses(id?: number) {
+    if (!id || !token.value || statuses.value[id])
         return;
 
-    canLeft.value  = el.scrollLeft > 4;
-    canRight.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 4;
+    statuses.value[id] = (await new FranchiseRepository().watchStatuses(id).catch(() => null))?.data ?? {};
 }
 
-function page(direction: -1 | 1) {
-    const el = strip.value;
-
-    if (el)
-        el.scrollBy({left: direction * el.clientWidth * 0.8, behavior: 'smooth'});
-}
-
-function onKey(event: KeyboardEvent) {
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-        event.preventDefault();
-        page(event.key === 'ArrowLeft' ? -1 : 1);
-    }
-}
-
-// Края ленты гаснут градиентом с той стороны, где есть ещё карточки.
-const edgeMask = computed(() => {
-    const left  = canLeft.value ? 'transparent, black 48px' : 'black, black';
-    const right = canRight.value ? 'black calc(100% - 48px), transparent' : 'black, black';
-    const mask  = `linear-gradient(to right, ${left}, ${right})`;
-
-    return {maskImage: mask, WebkitMaskImage: mask};
-});
-
-// --- перетаскивание мышью (тач листает сам, нативно) ---
-
-const DRAG_THRESHOLD = 5;
-
-const dragging = ref(false);
-let pointerId: number | null = null;
-let startX                   = 0;
-let startScroll              = 0;
-let moved                    = false;
-
-function onPointerDown(event: PointerEvent) {
-    if (event.pointerType !== 'mouse' || event.button !== 0 || !strip.value)
-        return;
-
-    pointerId   = event.pointerId;
-    startX      = event.clientX;
-    startScroll = strip.value.scrollLeft;
-    moved       = false;
-}
-
-function onPointerMove(event: PointerEvent) {
-    if (event.pointerId !== pointerId || !strip.value)
-        return;
-
-    const dx = event.clientX - startX;
-
-    if (!moved && Math.abs(dx) < DRAG_THRESHOLD)
-        return;
-
-    if (!moved) {
-        moved          = true;
-        dragging.value = true;
-        strip.value.setPointerCapture(event.pointerId);
-    }
-
-    strip.value.scrollLeft = startScroll - dx;
-}
-
-function onPointerUp(event: PointerEvent) {
-    if (event.pointerId !== pointerId)
-        return;
-
-    pointerId = null;
-
-    if (strip.value?.hasPointerCapture(event.pointerId))
-        strip.value.releasePointerCapture(event.pointerId);
-
-    dragging.value = false;
-}
-
-// Отпущенная после перетаскивания кнопка не должна открывать фильм под курсором.
-function onClickCapture(event: MouseEvent) {
-    if (moved) {
-        event.preventDefault();
-        event.stopPropagation();
-        moved = false;
-    }
-}
-
-let resizeObserver: ResizeObserver | null = null;
-
-onMounted(async () => {
-    // Доезжаем до текущего тайтла, не трогая вертикальную прокрутку страницы.
-    const current = strip.value?.querySelector<HTMLElement>('[data-current]');
-
-    if (strip.value && current)
-        strip.value.scrollLeft = current.offsetLeft - (strip.value.clientWidth - current.offsetWidth) / 2;
-
-    updateEdges();
-
-    if (strip.value) {
-        resizeObserver = new ResizeObserver(updateEdges);
-        resizeObserver.observe(strip.value);
-    }
-
-    if (token.value)
-        statuses.value = (await new FranchiseRepository().watchStatuses(props.franchise.id).catch(() => null))?.data ?? {};
-});
-
-onBeforeUnmount(() => resizeObserver?.disconnect());
+onMounted(() => loadStatuses(selected.value?.id));
+watch(selectedId, id => loadStatuses(id));
 </script>
 
 <template>
-    <div v-if="films.length > 1" class="flex flex-col gap-2.5">
-        <div class="flex flex-wrap items-baseline justify-between gap-x-5 gap-y-1">
-            <h1 class="font-bold text-2xl">
+    <div v-if="selected" class="flex flex-col gap-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
+            <h1 v-if="options.length == 1" class="font-bold text-2xl">
                 <span>Франшиза</span>
-                <NuxtLink :to="`/catalog/franchises/${franchise.id}`"
+                <NuxtLink :to="`/catalog/franchises/${selected.id}`"
                           class="ms-1.5 hover:text-primary-500">
-                    «{{ franchise.name }}»
+                    «{{ selected.name }}»
                 </NuxtLink>
             </h1>
 
+            <div v-else class="flex flex-wrap items-center gap-2.5">
+                <h1 class="font-bold text-2xl">Франшизы</h1>
+
+                <div class="flex flex-wrap gap-1.5" role="tablist">
+                    <UButton v-for="option in options"
+                             :key="option.id"
+                             role="tab"
+                             :aria-selected="option.id == selected.id"
+                             :color="option.id == selected.id ? 'primary' : 'neutral'"
+                             :variant="option.id == selected.id ? 'solid' : 'soft'"
+                             size="sm"
+                             @click="() => { selectedId = option.id }">
+                        <span>{{ option.name }}</span>
+                        <span class="opacity-60 font-normal">{{ option.films.length }}</span>
+                    </UButton>
+                </div>
+            </div>
+
             <p class="text-sm font-light text-muted">
-                <template v-if="position > 0">{{ position }} из {{ films.length }} по хронологии</template>
-                <template v-else>{{ films.length }} {{ plural(films.length, 'тайтл', 'тайтла', 'тайтлов') }}</template>
+                <template v-if="position > 0">{{ position }} из {{ selected.films.length }} по хронологии</template>
+                <template v-else>{{ selected.films.length }} {{ plural(selected.films.length, 'тайтл', 'тайтла', 'тайтлов') }}</template>
                 ·
-                <NuxtLink :to="`/catalog/franchises/${franchise.id}`" class="text-primary hover:text-primary-500">
+                <NuxtLink :to="`/catalog/franchises/${selected.id}`" class="text-primary hover:text-primary-500">
                     таймлайн
                 </NuxtLink>
             </p>
         </div>
 
-        <div class="relative -mx-2">
-            <!-- py/px — место под рамку текущей карточки: overflow-x режет и по вертикали -->
-            <div ref="strip"
-                 tabindex="0"
-                 aria-label="Тайтлы франшизы, листать стрелками"
-                 class="relative flex items-start gap-2 overflow-x-auto p-2 outline-none select-none
-                        [scrollbar-width:none] [&::-webkit-scrollbar]:hidden
-                        focus-visible:ring-2 focus-visible:ring-primary/50 rounded-xl"
-                 :class="dragging ? 'cursor-grabbing' : 'cursor-grab snap-x'"
-                 :style="edgeMask"
-                 @scroll.passive="updateEdges"
-                 @keydown="onKey"
-                 @pointerdown="onPointerDown"
-                 @pointermove="onPointerMove"
-                 @pointerup="onPointerUp"
-                 @pointercancel="onPointerUp"
-                 @click.capture="onClickCapture"
-                 @dragstart.prevent>
-                <div v-for="film in films"
-                     :key="film.id"
-                     :data-current="film.id == currentId ? '' : undefined"
-                     class="flex snap-start scroll-ms-2 shrink-0 rounded-xl p-1.5"
-                     :class="film.id == currentId ? 'ring-2 ring-primary bg-primary/10' : ''">
-                    <UiTimelineCard :film="film"
-                                    :branch="SERIES_FORMATS.includes(film.format) ? 'series' : 'films'"
-                                    :status="statuses[film.id]"/>
-                </div>
-            </div>
-
-            <!-- Стрелки по центру постеров (постер 2:3 при ширине 130px ≈ 195px) -->
-            <UButton v-show="canLeft"
-                     icon="i-lucide-chevron-left"
-                     color="neutral"
-                     variant="solid"
-                     size="lg"
-                     aria-label="Назад"
-                     tabindex="-1"
-                     class="absolute left-1 top-[calc(0.5rem+0.375rem+97px)] -translate-y-1/2 z-10 rounded-full shadow-lg opacity-90 hover:opacity-100"
-                     @click="page(-1)"/>
-
-            <UButton v-show="canRight"
-                     icon="i-lucide-chevron-right"
-                     color="neutral"
-                     variant="solid"
-                     size="lg"
-                     aria-label="Вперёд"
-                     tabindex="-1"
-                     class="absolute right-1 top-[calc(0.5rem+0.375rem+97px)] -translate-y-1/2 z-10 rounded-full shadow-lg opacity-90 hover:opacity-100"
-                     @click="page(1)"/>
-        </div>
+        <!-- :key — новая лента при смене франшизы, чтобы она доехала до текущего тайтла -->
+        <UiFranchiseRail :key="selected.id"
+                         :films="selected.films"
+                         :current-id="currentId"
+                         :statuses="statuses[selected.id]"/>
     </div>
 </template>
