@@ -130,7 +130,7 @@ const statLine = computed(() => [
                                      size="lg"
                                      color="neutral"
                                      variant="outline"
-                                     class="text-white ring-white/30 hover:bg-white/10"
+                                     class="bg-transparent text-white ring-white/30 hover:bg-white/10 active:bg-white/15"
                                      @click="emit('random')"/>
                         </div>
                     </div>
