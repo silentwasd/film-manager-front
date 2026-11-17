@@ -24,6 +24,16 @@ export default class CollectionRepository extends CrudRepository<Collection, num
         return this.client.delete<void>(`${this.baseUrl}/${collectionId}/films/${filmId}`);
     }
 
+    /** Добавить чужую коллекцию к себе — закладка, не копия. */
+    public save(collectionId: number): Promise<{ saved: boolean }> {
+        return this.client.post<{ saved: boolean }>(`${this.baseUrl}/${collectionId}/save`);
+    }
+
+    /** Убрать чужую коллекцию из своего списка; у автора она остаётся. */
+    public unsave(collectionId: number): Promise<{ saved: boolean }> {
+        return this.client.delete<{ saved: boolean }>(`${this.baseUrl}/${collectionId}/save`);
+    }
+
     public reorder(collectionId: number, filmIds: number[]): Promise<void> {
         return this.client.put<void>(`${this.baseUrl}/${collectionId}/films/reorder`, {films: filmIds});
     }

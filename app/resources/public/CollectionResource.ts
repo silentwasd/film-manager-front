@@ -37,4 +37,9 @@ export default interface CollectionResource {
     films_count?: number;
     films: CollectionFilmResource[];
     updated_at: string | null;
+    /** Только для вошедшего. */
+    viewer?: {
+        own: boolean;
+        saved: boolean;
+    };
 }

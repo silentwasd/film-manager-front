@@ -24,6 +24,10 @@ const collection              = computed<Collection | null>(() => collectionData
 
 useSeoMeta({title: () => `${collection.value?.name ?? 'Коллекция'} // ВКинопоиск`});
 
+// Чужая коллекция, добавленная к себе, открывается только на просмотр:
+// бэкенд правку всё равно не пропустит, а здесь прячем сами кнопки.
+const canEdit = computed<boolean>(() => collection.value?.can_edit ?? false);
+
 const serverFilms = ref<CollectionFilm[]>(collection.value?.films ?? []);
 const localFilms  = ref<CollectionFilm[]>([...(collection.value?.films ?? [])]);
 
@@ -241,6 +245,27 @@ async function copyLink() {
     }
 }
 
+// --- Убрать чужую коллекцию из своих ---
+const unsaving = ref(false);
+
+async function unsave() {
+    unsaving.value = true;
+
+    try {
+        await repo.unsave(id);
+        toast.add({title: 'Коллекция убрана из ваших'});
+        await navigateTo('/catalog/collections');
+    } catch (err: any) {
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err.message,
+            color      : 'error'
+        });
+    } finally {
+        unsaving.value = false;
+    }
+}
+
 // --- Защита от потери порядка ---
 useEventListener('beforeunload', (e: BeforeUnloadEvent) => {
     if (isDirty.value) {
@@ -270,7 +295,13 @@ onBeforeRouteLeave(() => {
                     <div class="flex items-center gap-2.5 mt-0.5">
                         <h1 class="text-2xl font-bold">{{ collection?.name }}</h1>
 
-                        <UTooltip :text="collectionVisibility(collection?.visibility).hint">
+                        <UTooltip v-if="!canEdit" text="Чужая коллекция: смотреть можно, править — нет.">
+                            <UBadge color="neutral" variant="outline" icon="i-heroicons-bookmark-20-solid">
+                                Добавлена
+                            </UBadge>
+                        </UTooltip>
+
+                        <UTooltip v-else :text="collectionVisibility(collection?.visibility).hint">
                             <UBadge :color="collectionVisibility(collection?.visibility).color"
                                     variant="subtle"
                                     :icon="collectionVisibility(collection?.visibility).icon">
@@ -279,12 +310,29 @@ onBeforeRouteLeave(() => {
                         </UTooltip>
                     </div>
 
+                    <NuxtLink v-if="collection?.author"
+                              class="flex items-center gap-1.5 text-sm text-neutral-400 hover:underline underline-offset-2 mt-1 w-fit"
+                              :to="`/users/${collection.author.public_key}`">
+                        <UIcon name="i-heroicons-user-20-solid" class="w-4 h-4"/>
+                        {{ collection.author.name }}
+                    </NuxtLink>
+
                     <p v-if="collection?.description" class="text-sm text-neutral-400 mt-1 max-w-xl">
                         {{ collection.description }}
                     </p>
                 </div>
 
-                <div class="flex items-center gap-2.5">
+                <div v-if="!canEdit" class="flex items-center gap-2.5">
+                    <UButton icon="i-heroicons-bookmark-slash-20-solid"
+                             color="neutral"
+                             variant="subtle"
+                             :loading="unsaving"
+                             @click="unsave">
+                        Убрать из моих
+                    </UButton>
+                </div>
+
+                <div v-else class="flex items-center gap-2.5">
                     <UDropdownMenu :items="visibilityMenu">
                         <UButton :icon="collectionVisibility(collection?.visibility).icon"
                                  color="neutral"
@@ -309,7 +357,7 @@ onBeforeRouteLeave(() => {
                  class="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-primary-500/10 border border-primary-500/30 shrink-0">
                 <div class="min-w-0">
                     <p class="text-sm font-medium">
-                        {{ collectionVisibility(collection.visibility).label }} — открыта по ссылке
+                        {{ canEdit ? collectionVisibility(collection.visibility).label : 'Страница коллекции' }} — открыта по ссылке
                     </p>
 
                     <a :href="collection.public_url"
@@ -366,7 +414,7 @@ onBeforeRouteLeave(() => {
             <!-- Список фильмов с точками вставки -->
             <div v-if="localFilms.length > 0" class="overflow-auto">
                 <!-- Вставить в начало -->
-                <div class="group">
+                <div v-if="canEdit" class="group">
                     <button class="w-full opacity-0 group-hover:opacity-100 flex items-center justify-center gap-1.5 text-xs text-neutral-400 hover:text-fuchsia-400 transition-all py-1.5 rounded hover:bg-fuchsia-500/10"
                             @click="openAddFilm(1)">
                         <UIcon name="i-heroicons-plus-circle" class="w-3.5 h-3.5"/>
@@ -389,11 +437,13 @@ onBeforeRouteLeave(() => {
                                v-model="localFilms"
                                item-key="id"
                                handle=".drag-handle"
+                               :disabled="!canEdit"
                                ghost-class="opacity-40">
                         <template #item="{element, index}">
                             <tr class="border-b dark:border-neutral-800/60 hover:bg-neutral-100 dark:hover:bg-neutral-800/30 transition-colors">
                                 <td class="py-2.5 pr-2">
-                                    <UIcon name="i-heroicons-bars-3"
+                                    <UIcon v-if="canEdit"
+                                           name="i-heroicons-bars-3"
                                            class="drag-handle cursor-grab active:cursor-grabbing text-neutral-400 w-5 h-5"/>
                                 </td>
 
@@ -430,11 +480,11 @@ onBeforeRouteLeave(() => {
                                         {{ element.note }}
                                     </p>
 
-                                    <p v-else class="text-xs text-neutral-500 italic">нет заметки</p>
+                                    <p v-else-if="canEdit" class="text-xs text-neutral-500 italic">нет заметки</p>
                                 </td>
 
                                 <td class="py-2.5">
-                                    <div class="flex items-center justify-end gap-1.5">
+                                    <div v-if="canEdit" class="flex items-center justify-end gap-1.5">
                                         <UTooltip text="Добавить после">
                                             <UButton color="neutral"
                                                      variant="ghost"
@@ -473,7 +523,8 @@ onBeforeRouteLeave(() => {
             <div v-else class="flex flex-col items-center justify-center gap-3 py-16 text-neutral-400">
                 <UIcon name="i-heroicons-film" class="w-12 h-12"/>
                 <p>В коллекции пока нет фильмов</p>
-                <UButton variant="subtle" color="neutral" @click="openAddFilm()">
+                <UButton v-if="canEdit"
+                         variant="subtle" color="neutral" @click="openAddFilm()">
                     Добавить первый фильм
                 </UButton>
             </div>

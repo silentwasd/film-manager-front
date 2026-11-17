@@ -24,7 +24,7 @@ async function loadCollections() {
     loading.value = true;
 
     try {
-        const data      = await repo.fetchList<PaginatedCollection<Collection>>({per_page: 100});
+        const data      = await repo.fetchList<PaginatedCollection<Collection>>({per_page: 100, scope: 'own'});
         collections.value = data.data;
     } finally {
         loading.value = false;

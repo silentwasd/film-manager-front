@@ -126,11 +126,19 @@ async function copyLink(collection: Collection) {
     }
 }
 
+// Своя удаляется совсем, чужая — только из своего списка: у автора и у
+// других, кто её добавил, она остаётся.
 async function remove(collection: Collection) {
     removing.value[collection.id] = true;
 
     try {
-        await repo.remove(collection.id);
+        if (collection.is_own === false) {
+            await repo.unsave(collection.id);
+            toast.add({title: 'Коллекция убрана из ваших'});
+        } else {
+            await repo.remove(collection.id);
+        }
+
         await refresh();
     } catch (err: any) {
         toast.add({
@@ -174,10 +182,21 @@ async function remove(collection: Collection) {
                           :to="`/catalog/collections/${row.id}`">
                     {{ row.name }}
                 </NuxtLink>
+
+                <p v-if="row.author" class="text-xs text-neutral-400">
+                    {{ row.author.name }}
+                </p>
             </template>
 
             <template #visibility-data="{row}">
-                <UTooltip :text="collectionVisibility(row.visibility).hint">
+                <UTooltip v-if="row.is_own === false"
+                          :text="`Коллекция пользователя ${row.author?.name ?? ''}: смотреть можно, править — нет.`">
+                    <UBadge color="neutral" variant="outline" icon="i-heroicons-bookmark-20-solid">
+                        Добавлена
+                    </UBadge>
+                </UTooltip>
+
+                <UTooltip v-else :text="collectionVisibility(row.visibility).hint">
                     <UBadge :color="collectionVisibility(row.visibility).color"
                             variant="subtle"
                             :icon="collectionVisibility(row.visibility).icon">
@@ -196,7 +215,7 @@ async function remove(collection: Collection) {
                                  @click="copyLink(row)"/>
                     </UTooltip>
 
-                    <UDropdownMenu :items="visibilityMenu(row)">
+                    <UDropdownMenu v-if="row.can_edit" :items="visibilityMenu(row)">
                         <UTooltip text="Изменить доступ">
                             <UButton color="neutral"
                                      variant="subtle"
@@ -214,7 +233,7 @@ async function remove(collection: Collection) {
                                  :to="`/catalog/collections/${row.id}`"/>
                     </UTooltip>
 
-                    <UTooltip text="Переименовать">
+                    <UTooltip v-if="row.can_edit" text="Переименовать">
                         <UButton color="neutral"
                                  variant="subtle"
                                  icon="i-heroicons-pencil-solid"
@@ -222,10 +241,10 @@ async function remove(collection: Collection) {
                                  @click="editRow = row"/>
                     </UTooltip>
 
-                    <UTooltip text="Удалить">
+                    <UTooltip :text="row.is_own === false ? 'Убрать из моих' : 'Удалить'">
                         <UButton color="neutral"
                                  variant="subtle"
-                                 icon="i-heroicons-trash-solid"
+                                 :icon="row.is_own === false ? 'i-heroicons-bookmark-slash-20-solid' : 'i-heroicons-trash-solid'"
                                  :loading="removing[row.id] ?? false"
                                  @click="remove(row)"/>
                     </UTooltip>

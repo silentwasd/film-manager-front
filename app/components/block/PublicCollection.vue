@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CollectionRepository from "~/repos/CollectionRepository";
 import type CollectionResource from "~/resources/public/CollectionResource";
 
 /**
@@ -23,6 +24,45 @@ async function copyLink() {
         setTimeout(() => copied.value = false, 2000);
     } catch {
         // Clipboard API недоступен вне https или без разрешения — молча игнорируем.
+    }
+}
+
+// --- Добавить к себе ---
+// viewer приходит только вошедшему; гостя кнопка отправляет на вход
+// и возвращает сюда же.
+const toast    = useToast();
+const repo     = new CollectionRepository();
+const own      = computed(() => props.collection.viewer?.own ?? false);
+const saved    = ref(props.collection.viewer?.saved ?? false);
+const toggling = ref(false);
+
+async function toggleSaved() {
+    if (!props.collection.viewer) {
+        backAfterLogin();
+        return;
+    }
+
+    toggling.value = true;
+
+    try {
+        const result = saved.value
+            ? await repo.unsave(props.collection.id)
+            : await repo.save(props.collection.id);
+
+        saved.value = result.saved;
+
+        toast.add({
+            title: saved.value ? 'Коллекция добавлена к вам' : 'Коллекция убрана из ваших',
+            ...(saved.value ? {description: 'Она появится в разделе «Коллекции».'} : {})
+        });
+    } catch (err: any) {
+        toast.add({
+            title      : 'Ошибка',
+            description: err?.data?.message || err.message,
+            color      : 'error'
+        });
+    } finally {
+        toggling.value = false;
     }
 }
 </script>
@@ -69,6 +109,25 @@ async function copyLink() {
                                      size="xs"
                                      class="px-0"
                                      @click="copyLink"/>
+                        </div>
+
+                        <div class="mt-4">
+                            <UButton v-if="own"
+                                     icon="i-heroicons-pencil-square-20-solid"
+                                     color="neutral"
+                                     variant="subtle"
+                                     :to="`/catalog/collections/${collection.id}`">
+                                Это ваша коллекция — редактировать
+                            </UButton>
+
+                            <UButton v-else
+                                     :icon="saved ? 'i-heroicons-bookmark-slash-20-solid' : 'i-heroicons-bookmark-20-solid'"
+                                     :color="saved ? 'neutral' : 'primary'"
+                                     :variant="saved ? 'subtle' : 'solid'"
+                                     :loading="toggling"
+                                     @click="toggleSaved">
+                                {{ saved ? 'Убрать из моих' : 'Добавить к себе' }}
+                            </UButton>
                         </div>
                     </div>
                 </div>
