@@ -17,6 +17,9 @@ const filmId           = parseInt(route.params.film as string);
 const filmRepo         = new FilmRepository();
 const {state: profile} = useProfile();
 
+// Модалка «Запланировать просмотр».
+const planOpen = ref(false);
+
 const {data: film} = await filmRepo.show(`film.${filmId}`, filmId);
 
 const filmData = computed<Film | null>(() => film.value?.data || null);
@@ -97,6 +100,18 @@ const overallFeedback = computed(() => (feedback.value?.data ?? []).filter(item 
                                  @click="backAfterLogin()"/>
 
                         <UiAddToCollection v-if="profile" :film-id="filmData.id"/>
+
+                        <UButton v-if="profile"
+                                 color="neutral"
+                                 variant="subtle"
+                                 icon="i-heroicons-play-circle-20-solid"
+                                 label="Запланировать"
+                                 class="w-full"
+                                 @click="planOpen = true"/>
+
+                        <PlanModal v-if="profile"
+                                   v-model:open="planOpen"
+                                   :film="{id: filmData.id, name: filmData.name}"/>
 
                         <UButton
                             v-if="profile?.role == UserRole.Admin || (filmData.author_id && filmData.author_id == profile?.id)"

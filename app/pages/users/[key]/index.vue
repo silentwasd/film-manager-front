@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import FriendRepository from "~/repos/management/FriendRepository";
 import UserRepository from "~/repos/public/UserRepository";
+import type {FriendshipState} from "~/resources/management/Friends";
 import type UserResource from "~/resources/public/UserResource";
 
 definePageMeta({
@@ -24,6 +26,58 @@ if (error.value || !response.value?.data) {
 const user = computed<UserResource>(() => response.value!.data);
 
 const collections = computed(() => user.value.collections ?? []);
+
+// --- Дружба: поле приходит только вошедшему ---
+const friendRepo  = new FriendRepository();
+const toast       = useToast();
+const friendship  = ref<FriendshipState | undefined>(user.value.friendship);
+const befriending = ref(false);
+
+const friendButton = computed(() => ({
+    none    : {label: 'Добавить в друзья', icon: 'i-heroicons-user-plus-20-solid', solid: true},
+    incoming: {label: 'Принять заявку', icon: 'i-heroicons-user-plus-20-solid', solid: true},
+    outgoing: {label: 'Заявка отправлена', icon: 'i-heroicons-clock-20-solid', solid: false},
+    friends : {label: 'Друзья', icon: 'i-heroicons-check-20-solid', solid: false},
+    self    : null
+}[friendship.value ?? 'none']));
+
+const friendMenu = computed(() => friendship.value === 'friends'
+    ? [[
+        {label: 'Что смотрим вместе', icon: 'i-heroicons-play-circle-20-solid', to: `/plans?friend=${user.value.id}`},
+        {label: 'Удалить из друзей', icon: 'i-heroicons-user-minus-20-solid', color: 'error' as const, onSelect: () => befriend('remove')}
+    ]]
+    : [[{label: 'Отозвать заявку', icon: 'i-heroicons-x-mark-20-solid', onSelect: () => befriend('remove')}]]);
+
+async function befriend(action: 'add' | 'remove') {
+    if (friendship.value === undefined) {
+        backAfterLogin();
+        return;
+    }
+
+    befriending.value = true;
+
+    try {
+        const result = action === 'remove'
+            ? await friendRepo.remove(user.value.id)
+            : friendship.value === 'incoming'
+                ? await friendRepo.accept(user.value.id)
+                : await friendRepo.request(user.value.id);
+
+        friendship.value = result.state;
+
+        toast.add({
+            title: {
+                friends : `${user.value.name} теперь ваш друг`,
+                outgoing: 'Заявка отправлена',
+                none    : 'Готово',
+            }[result.state as string] ?? 'Готово'
+        });
+    } catch (err: any) {
+        toast.add({title: 'Ошибка', description: err?.data?.message || err.message, color: 'error'});
+    } finally {
+        befriending.value = false;
+    }
+}
 
 // Обычные константы, а не computed: данные статичны после await, а ленивый
 // computed вычислился бы при резолве head уже вне setup-контекста.
@@ -70,6 +124,26 @@ useHead({
                             {{ collections.length }}
                             {{ plural(collections.length, 'коллекция', 'коллекции', 'коллекций') }}
                         </p>
+                    </div>
+
+                    <div v-if="friendButton" class="shrink-0">
+                        <UButton v-if="friendButton.solid"
+                                 :icon="friendButton.icon"
+                                 :loading="befriending"
+                                 class="dark:bg-fuchsia-300 dark:hover:bg-fuchsia-200"
+                                 @click="befriend('add')">
+                            {{ friendButton.label }}
+                        </UButton>
+
+                        <UDropdownMenu v-else :items="friendMenu">
+                            <UButton :icon="friendButton.icon"
+                                     color="neutral"
+                                     variant="subtle"
+                                     trailing-icon="i-heroicons-chevron-down-20-solid"
+                                     :loading="befriending">
+                                {{ friendButton.label }}
+                            </UButton>
+                        </UDropdownMenu>
                     </div>
                 </div>
             </UContainer>

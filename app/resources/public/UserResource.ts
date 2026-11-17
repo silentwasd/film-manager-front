@@ -1,3 +1,4 @@
+import type {FriendshipState} from "~/resources/management/Friends";
 import type {CollectionCardResource} from "~/resources/public/CollectionResource";
 
 export default interface UserResource {
@@ -5,4 +6,6 @@ export default interface UserResource {
     name: string;
     public_key: string;
     collections: CollectionCardResource[];
+    /** Только для вошедшего. */
+    friendship?: FriendshipState;
 }

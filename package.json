@@ -13,7 +13,9 @@
     "@nuxt/ui": "^4.8.2",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@vueuse/nuxt": "^12.8.2",
+    "laravel-echo": "2.6.3",
     "nuxt": "^4.4.7",
+    "pusher-js": "8.6.0",
     "tailwindcss": "^4.3.0",
     "vue": "latest",
     "vuedraggable": "^4.1.0"

@@ -16,7 +16,11 @@ export default defineNuxtConfig({
         public: {
             apiUrl     : process.env.NUXT_API_URL,
             storageUrl : process.env.NUXT_STORAGE_URL,
-            externalUrl: process.env.NUXT_EXTERNAL_URL
+            externalUrl: process.env.NUXT_EXTERNAL_URL,
+            // Reverb: ключ приложения (не секрет) и хост WebSocket. Хост по
+            // умолчанию берётся из NUXT_API_URL — сокет живёт на том же домене.
+            reverbKey  : process.env.NUXT_REVERB_KEY,
+            reverbHost : process.env.NUXT_REVERB_HOST
         }
     },
 
